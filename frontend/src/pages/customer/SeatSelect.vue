@@ -4,7 +4,7 @@
       <div class="row-between" style="margin-bottom: 32px;">
         <div>
           <h1 class="page-title">Pilih Meja</h1>
-          <p class="page-sub">Input nomor meja 1 sampai 50 untuk mulai pesan</p>
+          <p class="page-sub">Pilih nomor meja untuk mulai memesan</p>
         </div>
         <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
           <span class="badge-meja" style="padding: 4px 10px; font-size: 10px;">Customer</span>
@@ -84,7 +84,6 @@ const seatsList = computed(() => {
 
 const refreshTaken = async () => {
   try {
-    // fetch active orders
     const res = await api.get('/orders')
     const orders = res?.data?.data || res?.data || []
     const s = new Set()
@@ -95,9 +94,7 @@ const refreshTaken = async () => {
       }
     })
 
-    // also fetch seats table to detect locked seats
     try {
-      // gateway exposes order-service seats at /api/orders/seats -> use '/orders/seats' here
       const r2 = await api.get('/orders/seats')
       const seats = r2?.data?.data || r2?.data || []
       seats.forEach((srow) => {
@@ -106,14 +103,10 @@ const refreshTaken = async () => {
           if (!Number.isNaN(n)) s.add(n)
         }
       })
-    } catch (e2) {
-      // ignore seat endpoint errors
-    }
+    } catch (e2) {}
 
     taken.value = s
-  } catch (e) {
-    // ignore errors for now
-  }
+  } catch (e) {}
 }
 
 onMounted(() => {
@@ -130,7 +123,6 @@ const canStart = computed(() => {
 })
 
 const pickSeat = (n) => {
-  // ignore picks for taken seats
   if (taken.value.has(n)) return
   seat.value = String(n)
   error.value = ''
@@ -159,9 +151,95 @@ const startOrder = async () => {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+.seat-page {
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  background: #0D0B09;
+  padding: 48px 28px;
+  display: flex;
+  justify-content: center;
+}
+.seat-shell {
+  width: 100%;
+  max-width: 900px;
+}
+.row-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.page-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #f0d9b0;
+  margin: 0;
+}
+.page-sub {
+  font-size: 13px;
+  color: rgba(240, 217, 176, 0.35);
+  margin-top: 4px;
+}
+.body-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 24px;
+  align-items: flex-start;
+}
+@media (max-width: 900px) {
+  .body-grid { grid-template-columns: 1fr; }
+}
+.sticky-panel {
+  position: sticky;
+  top: 24px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.055);
+  border-radius: 18px;
+  padding: 24px;
+}
+.field-input {
+  width: 100%;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 14px;
+  color: #f0d9b0;
+  font-family: 'DM Sans', sans-serif;
+}
+.field-input:focus {
+  outline: none;
+  border-color: rgba(200,135,42,0.45);
+}
+.submit-btn {
+  padding: 12px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #b8721e, #d4943a);
+  border: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1108;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+.submit-btn:hover:not(:disabled) {
+  opacity: 0.92;
+}
+.submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.badge-meja {
+  background: rgba(200, 135, 42, 0.10);
+  border: 1px solid rgba(200, 135, 42, 0.25);
+  border-radius: 10px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #d4a050;
+}
 .admin-link {
   font-size: 12px;
-  color: var(--muted);
+  color: rgba(240,217,176,0.3);
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -169,7 +247,11 @@ const startOrder = async () => {
   transition: all 0.2s;
 }
 .admin-link:hover {
-  color: white;
+  color: #f0d9b0;
+}
+.grid-seat {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
 }
 </style>
-
