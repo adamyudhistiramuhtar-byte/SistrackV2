@@ -13,10 +13,13 @@ router.post('/seat', async (req, res, next) => {
     }
 
     const seatNumInt = parseInt(seat_number);
+    if (seatNumInt < 1 || seatNumInt > 50) {
+      throw new AppError('Nomor meja harus 1-50', 400);
+    }
 
-    // Verify seat is available
-    const seat = await Seat.findBySeatNumber(seatNumInt);
-    if (!seat) throw new AppError('Kursi tidak ditemukan', 404);
+    // Verify seat is available (auto-create if missing to support all 50 seats)
+    const seat = await Seat.findOrCreateSeat(seatNumInt);
+    if (!seat) throw new AppError('Gagal membuat atau menemukan kursi', 500);
     if (seat.status !== 'available') throw new AppError('Kursi tidak tersedia', 400);
 
     const token = jwt.sign(

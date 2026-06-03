@@ -8,6 +8,15 @@ const findBySeatNumber = async (seatNumber) => {
   return rows[0];
 };
 
+const findOrCreateSeat = async (seatNumber) => {
+  let seat = await findBySeatNumber(seatNumber);
+  if (!seat) {
+    await db.query('INSERT IGNORE INTO seats (seat_number, status) VALUES (?, ?)', [seatNumber, 'available']);
+    seat = await findBySeatNumber(seatNumber);
+  }
+  return seat;
+};
+
 const lockSeat = async (seatNumber, sessionId) => {
   await db.query(
     `UPDATE seats 
@@ -26,4 +35,4 @@ const releaseSeat = async (seatNumber) => {
   );
 };
 
-module.exports = { findBySeatNumber, lockSeat, releaseSeat };
+module.exports = { findBySeatNumber, findOrCreateSeat, lockSeat, releaseSeat };
