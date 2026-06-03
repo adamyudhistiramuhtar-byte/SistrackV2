@@ -37,18 +37,18 @@ const format = (n) =>
 .prod {
   display: flex;
   flex-direction: column;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 20px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.055);
+  border-radius: 18px;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  backdrop-filter: blur(10px);
 }
 
 .prod:not(.is-disabled):hover {
-  transform: translateY(-5px);
-  border-color: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+  transform: translateY(-4px);
+  border-color: rgba(200,135,42,0.3);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+  background: rgba(200,135,42,0.05);
 }
 
 .content {
@@ -62,30 +62,32 @@ const format = (n) =>
 .info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   flex: 1;
 }
 
 .name {
-  font-weight: 700;
-  font-size: 15px;
-  letter-spacing: -0.2px;
-  line-height: 1.2;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #f0d9b0;
+  line-height: 1.3;
 }
 
 .price {
+  font-family: 'DM Sans', sans-serif;
   font-size: 13px;
-  color: var(--ok);
-  font-weight: 600;
+  color: rgba(240,217,176,0.55);
+  font-weight: 400;
 }
 
 .add {
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
   border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.05);
-  color: white;
+  background: rgba(255,255,255,0.04);
+  color: #f0d9b0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -95,13 +97,14 @@ const format = (n) =>
 }
 
 .add:not(:disabled):hover {
-  background: white;
-  color: black;
+  background: #c8872a;
+  border-color: #c8872a;
+  color: #1a1108;
   transform: scale(1.05);
 }
 
 .is-disabled {
-  opacity: 0.6;
+  opacity: 0.5;
 }
 .is-disabled .add {
   width: auto;
@@ -110,6 +113,6 @@ const format = (n) =>
   background: transparent;
   cursor: not-allowed;
   border-color: transparent;
-  color: var(--muted);
+  color: rgba(240,217,176,0.3);
 }
 </style>

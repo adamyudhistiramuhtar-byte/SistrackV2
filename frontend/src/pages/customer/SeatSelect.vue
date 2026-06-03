@@ -1,13 +1,13 @@
 <template>
-  <div class="center-screen">
-    <div class="panel panel-pad" style="max-width: 880px;">
-      <div class="row-between">
+  <div class="seat-page">
+    <div class="seat-shell">
+      <div class="row-between" style="margin-bottom: 32px;">
         <div>
-          <h1 class="h1">Pilih Meja</h1>
-          <p class="p" style="margin-top: 8px;">Input nomor meja 1 sampai 50 untuk mulai pesan</p>
+          <h1 class="page-title">Pilih Meja</h1>
+          <p class="page-sub">Input nomor meja 1 sampai 50 untuk mulai pesan</p>
         </div>
         <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
-          <span class="kbd">Customer</span>
+          <span class="badge-meja" style="padding: 4px 10px; font-size: 10px;">Customer</span>
           <router-link to="/admin/login" class="admin-link">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
             Admin Login
@@ -15,10 +15,8 @@
         </div>
       </div>
 
-      <div class="divider"></div>
-
-      <div class="two-col">
-        <div class="panel" style="background: transparent; box-shadow: none; border: none;">
+      <div class="body-grid">
+        <div style="background: transparent; box-shadow: none; border: none;">
           <div class="grid grid-seat">
             <SeatCard
               v-for="n in seatsList"
@@ -30,33 +28,33 @@
           </div>
         </div>
 
-        <div class="sticky">
-          <BaseCard>
-            <div class="h2">Nomor meja</div>
-            <p class="p" style="margin-top: 6px;">Boleh klik grid atau ketik manual</p>
+        <div class="sticky-panel">
+          <div style="font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: #f0d9b0;">Nomor meja</div>
+          <p style="margin-top: 6px; font-size: 13px; color: rgba(240,217,176,0.3);">Boleh klik grid atau ketik manual</p>
 
-            <div style="margin-top: 12px;">
-              <BaseInput
-                v-model="seat"
-                type="number"
-                min="1"
-                max="50"
-                placeholder="Contoh: 12"
-              />
-            </div>
+          <div style="margin-top: 16px;">
+            <input
+              v-model="seat"
+              type="number"
+              min="1"
+              max="50"
+              placeholder="Contoh: 12"
+              class="field-input"
+            />
+          </div>
 
-            <BaseButton
-              style="width: 100%; margin-top: 12px;"
-              :disabled="!canStart"
-              @click="startOrder"
-            >
-              Mulai Pesan
-            </BaseButton>
+          <button
+            class="submit-btn"
+            style="width: 100%; margin-top: 16px;"
+            :disabled="!canStart"
+            @click="startOrder"
+          >
+            Mulai Pesan
+          </button>
 
-            <p v-if="error" class="p" style="color: var(--danger); margin-top: 10px;">
-              {{ error }}
-            </p>
-          </BaseCard>
+          <p v-if="error" style="color: #e07060; margin-top: 10px; font-size: 12px;">
+            {{ error }}
+          </p>
         </div>
       </div>
     </div>
