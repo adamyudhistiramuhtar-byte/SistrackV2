@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package analytics;
+
+message DashboardRequest {}
+
+message ChartSeries {
+  repeated string labels = 1;
+  repeated double values = 2;
+}
+
+message DashboardResponse {
+  int32 total_orders = 1;
+  double total_revenue = 2;
+  ChartSeries orders_chart = 3;
+  ChartSeries revenue_chart = 4;
+}
+
+service AnalyticsService {
+  rpc GetDashboardSummary (DashboardRequest) returns (DashboardResponse);
+}
