@@ -22,7 +22,33 @@
 
         <!-- PRODUCTS -->
         <div class="panel">
-          <div class="panel-inner">
+          <div class="panel-inner" style="display: flex; flex-direction: column; gap: 16px; padding: 20px;">
+            
+            <!-- FILTER BAR -->
+            <div class="filter-bar">
+              <input 
+                type="text" 
+                class="search-input" 
+                placeholder="Cari makanan atau minuman..." 
+                v-model="searchQuery" 
+              />
+              <div class="categories">
+                <button 
+                  class="cat-btn" 
+                  :class="{ active: activeCategory === '' }" 
+                  @click="activeCategory = ''"
+                >Semua</button>
+                <button 
+                  class="cat-btn" 
+                  v-for="c in categories" 
+                  :key="c"
+                  :class="{ active: activeCategory === c }" 
+                  @click="activeCategory = c"
+                >{{ c }}</button>
+              </div>
+            </div>
+
+            <div class="divider" style="margin: 0;"></div>
 
             <div v-if="loading" class="state muted">
               Loading produk…
@@ -34,14 +60,14 @@
 
             <div v-else class="products-grid">
               <div
-                v-if="products.length === 0"
+                v-if="filteredProducts.length === 0"
                 class="state muted full-span"
               >
-                Produk belum tersedia atau availability masih salah.
+                Produk tidak ditemukan.
               </div>
 
               <ProductCard
-                v-for="p in products"
+                v-for="p in filteredProducts"
                 :key="p.id"
                 :product="p"
                 @add="addToCart"
@@ -53,7 +79,7 @@
 
         <!-- CART -->
         <div class="panel cart-panel">
-          <div class="panel-inner">
+          <div class="panel-inner" style="padding: 16px;">
             <Cart
               :items="cart"
               :total="total"
@@ -84,6 +110,22 @@ const products = ref([])
 const cart = ref([])
 const loading = ref(false)
 const error = ref('')
+
+const searchQuery = ref('')
+const activeCategory = ref('')
+
+const categories = computed(() => {
+  const cats = new Set(products.value.map(p => p.category).filter(Boolean))
+  return Array.from(cats).sort()
+})
+
+const filteredProducts = computed(() => {
+  return products.value.filter(p => {
+    const matchSearch = p.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    const matchCat = activeCategory.value === '' || p.category === activeCategory.value
+    return matchSearch && matchCat
+  })
+})
 
 const loadCart = () => {
   const saved = localStorage.getItem('cart')
@@ -211,3 +253,55 @@ const goCheckout = () => {
   grid-column: 1 / -1;
 }
 </style>
+
+<style scoped>
+.filter-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.search-input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+  color: white;
+  font-family: inherit;
+  font-size: 14px;
+}
+.search-input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+.categories {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.categories::-webkit-scrollbar {
+  display: none;
+}
+.cat-btn {
+  padding: 6px 14px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.cat-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+.cat-btn.active {
+  background: white;
+  color: black;
+  border-color: white;
+}
+</style>
+
