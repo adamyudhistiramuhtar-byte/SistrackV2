@@ -15,9 +15,9 @@ const createOrderRules = [
   body('seatNumber').notEmpty().withMessage('Nomor kursi wajib diisi'),
   body('customerName').optional().trim().isLength({ min: 2, max: 100 })
     .withMessage('Nama pelanggan harus 2-100 karakter'),
-  body('phone').optional().matches(/^(\+62|08)\d{8,11}$/)
+  body('phone').optional({ checkFalsy: true }).matches(/^(\+62|08)\d{8,11}$/)
     .withMessage('Format nomor HP tidak valid (contoh: 081234567890)'),
-  body('paymentMethod').optional().isIn(['cash', 'transfer'])
+  body('paymentMethod').optional({ checkFalsy: true }).isIn(['cash', 'transfer'])
     .withMessage('Metode pembayaran harus cash atau transfer'),
   body('items').isArray({ min: 1 })
     .withMessage('Minimal 1 item pesanan'),
