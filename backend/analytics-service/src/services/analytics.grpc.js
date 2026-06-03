@@ -81,11 +81,21 @@ const createAnalyticsHandlers = async () => {
         const ordersValues = labels.map((d) => Number(dailyMap.get(d)?.orders || 0));
         const revenueValues = labels.map((d) => Number(dailyMap.get(d)?.revenue || 0));
 
+        const [activeSeatsRows] = await pool.query(
+          `
+          SELECT COUNT(DISTINCT seat_number) AS active_seats
+          FROM orders
+          WHERE status != 'completed' AND status != 'cancelled'
+          `
+        );
+        const activeSeats = Number(activeSeatsRows[0]?.active_seats || 0);
+
         callback(null, {
           total_orders: totalOrders,
           total_revenue: totalRevenue,
           orders_chart: { labels, values: ordersValues.map((v) => Number(v)) },
           revenue_chart: { labels, values: revenueValues.map((v) => Number(v)) },
+          active_seats: activeSeats,
         });
       } catch (err) {
         callback(err);

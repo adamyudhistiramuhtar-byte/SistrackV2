@@ -1,5 +1,5 @@
 <template>
-  <button class="seat" :class="{ active }" @click="$emit('pick', number)">
+  <button class="seat" :class="{ active, occupied }" :disabled="occupied" @click="$emit('pick', number)">
     {{ number }}
   </button>
 </template>
@@ -8,6 +8,7 @@
 defineProps({
   number: { type: Number, required: true },
   active: { type: Boolean, default: false },
+  occupied: { type: Boolean, default: false },
 })
 defineEmits(['pick'])
 </script>
@@ -26,7 +27,7 @@ defineEmits(['pick'])
   transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
 }
 
-.seat:hover {
+.seat:not(.occupied):hover {
   background: var(--border);
   border-color: var(--text-muted);
   transform: translateY(-2px);
@@ -38,5 +39,16 @@ defineEmits(['pick'])
   border-color: transparent;
   transform: scale(1.05);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.seat.occupied {
+  opacity: 0.35;
+  cursor: not-allowed;
+  background: var(--border);
+  border-color: transparent;
+  color: var(--text-muted);
+}
+.seat.occupied:hover {
+  transform: none;
 }
 </style>

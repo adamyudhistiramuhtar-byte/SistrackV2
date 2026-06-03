@@ -208,18 +208,16 @@ const goCheckout = () => {
 /* ── PAGE SHELL ─────────────────────────────────────── */
 .menu-page {
   font-family: 'DM Sans', sans-serif;
-  min-height: 100vh;
+  height: 100vh;
   background: var(--bg);
-  padding: 0; /* Padding handled by internal layout */
+  padding: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 /* ── COMMAND CENTER (HEADER) ────────────────────────── */
 .command-center {
-  position: sticky;
-  top: 0;
-  z-index: 100;
   background: rgba(248, 246, 242, 0.95);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -228,6 +226,7 @@ const goCheckout = () => {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  flex-shrink: 0;
 }
 
 .cc-top {
@@ -412,12 +411,22 @@ const goCheckout = () => {
   grid-template-columns: 1fr 360px;
   gap: 24px;
   align-items: flex-start;
-  padding: 24px 28px 48px;
+  padding: 24px 28px 24px; /* Reduced bottom padding */
+  flex: 1;
+  overflow: hidden; /* Constrain height */
 }
 
 @media (max-width: 1100px) {
   .body-grid {
     grid-template-columns: 1fr;
+    overflow-y: auto; /* Fallback for small screens */
+  }
+  .products-section {
+    overflow-y: visible !important;
+    padding-right: 0 !important;
+  }
+  .cart-sidebar {
+    height: auto !important;
   }
 }
 
@@ -425,6 +434,19 @@ const goCheckout = () => {
 .products-section {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  padding-right: 12px;
+  padding-bottom: 24px; /* Space at the bottom */
+}
+
+/* Hide scrollbar for sleekness */
+.products-section::-webkit-scrollbar {
+  display: none;
+}
+.products-section {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* ── STATES ─────────────────────────────────────────── */
@@ -488,15 +510,15 @@ const goCheckout = () => {
 
 /* ── CART SIDEBAR ───────────────────────────────────── */
 .cart-sidebar {
-  position: sticky;
-  top: 130px; /* Offset for the new sticky command center */
+  height: 100%;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 18px;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: calc(100vh - 150px);
   box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
 }
 /* hide scrollbar for sleekness */
 .cart-sidebar::-webkit-scrollbar {

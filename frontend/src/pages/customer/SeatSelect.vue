@@ -23,6 +23,7 @@
               :key="n"
               :number="n"
               :active="Number(seat) === n"
+              :occupied="taken.has(n)"
               @pick="pickSeat"
             />
           </div>
@@ -77,7 +78,7 @@ let pollId = null
 const seatsList = computed(() => {
   const out = []
   for (let i = 1; i <= 50; i++) {
-    if (!taken.value.has(i)) out.push(i)
+    out.push(i) // Return all 50 seats
   }
   return out
 })
