@@ -80,7 +80,7 @@
 
             <BaseSelect v-model="paymentMethod">
               <option value="cash">Cash</option>
-              <option value="debit">Debit</option>
+              <option value="transfer">Transfer</option>
             </BaseSelect>
 
             <div style="height:14px;"></div>
@@ -166,7 +166,7 @@ const submitOrder = async () => {
       phone: phone.value,
       paymentMethod: paymentMethod.value,
       items: cart.value.map(i => ({
-        id: i.id,
+        product_id: i.id,
         name: i.name,
         price: Number(i.price),
         qty: Number(i.qty),
