@@ -63,7 +63,8 @@ const area = computed(() => {
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 14px;
-  background: rgba(255,255,255,.03);
+  background: var(--surface);
+  box-shadow: var(--shadow);
 }
 .svg{
   width: 100%;
@@ -72,12 +73,12 @@ const area = computed(() => {
 }
 .line{
   fill: none;
-  stroke: #ffffff;
+  stroke: var(--accent);
   stroke-width: 2.2;
   opacity: .92;
 }
 .area{
-  fill: rgba(255,255,255,.10);
+  fill: rgba(22, 20, 15, 0.04);
   stroke: none;
 }
 .legend{
@@ -90,7 +91,7 @@ const area = computed(() => {
   width: 10px;
   height: 10px;
   border-radius: 99px;
-  background: #fff;
+  background: var(--accent);
   display:inline-block;
 }
 </style>

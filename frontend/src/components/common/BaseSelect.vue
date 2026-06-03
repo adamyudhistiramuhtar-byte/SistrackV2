@@ -22,8 +22,14 @@ defineEmits(['update:modelValue'])
   padding: 0 14px;
   border-radius: 12px;
   border: 1px solid var(--border);
-  background: #0f0f10;
+  background: transparent;
   color: var(--text);
   font-weight: 700;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+.select:focus{
+  outline: none;
+  border-color: var(--accent);
 }
 </style>
