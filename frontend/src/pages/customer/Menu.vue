@@ -169,50 +169,45 @@ const goCheckout = () => {
 </script>
 
 <style scoped>
-.menu-grid{
-  display:grid;
-  grid-template-columns: 1fr 420px;
-  gap:16px;
+.menu-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
 }
-@media (max-width: 1100px){
-  .menu-grid{
+@media (max-width: 1100px) {
+  .menu-grid {
     grid-template-columns: 1fr;
   }
 }
 
-.products-grid{
-  display:grid;
-  grid-template-columns: repeat(3, minmax(0,1fr));
-  gap:14px;
-}
-@media (max-width: 1200px){
-  .products-grid{
-    grid-template-columns: repeat(2, minmax(0,1fr));
-  }
-}
-@media (max-width: 640px){
-  .products-grid{
-    grid-template-columns: 1fr;
-  }
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
 }
 
-.cart-panel{
-  position:sticky;
-  top:24px;
+.cart-panel {
+  position: sticky;
+  top: 24px;
+  align-self: flex-start;
 }
 
-.state{
-  padding:40px 10px;
-  text-align:center;
-  font-weight:600;
+.panel-inner {
+  padding: 10px;
 }
-.state.muted{
+
+.state {
+  padding: 40px 10px;
+  text-align: center;
+  font-weight: 600;
+}
+.state.muted {
   color: var(--muted);
 }
-.state.error{
-  color:#ff4d4d;
+.state.error {
+  color: #ff4d4d;
 }
-.full-span{
+.full-span {
   grid-column: 1 / -1;
 }
 </style>

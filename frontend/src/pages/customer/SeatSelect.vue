@@ -6,7 +6,13 @@
           <h1 class="h1">Pilih Meja</h1>
           <p class="p" style="margin-top: 8px;">Input nomor meja 1 sampai 50 untuk mulai pesan</p>
         </div>
-        <span class="kbd">Customer</span>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+          <span class="kbd">Customer</span>
+          <router-link to="/admin/login" class="admin-link">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            Admin Login
+          </router-link>
+        </div>
       </div>
 
       <div class="divider"></div>
@@ -153,3 +159,19 @@ const startOrder = async () => {
   router.push('/menu')
 }
 </script>
+
+<style scoped>
+.admin-link {
+  font-size: 12px;
+  color: var(--muted);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s;
+}
+.admin-link:hover {
+  color: white;
+}
+</style>
+
