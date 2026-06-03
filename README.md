@@ -97,7 +97,44 @@ graph TD
 
 ## 🏛️ Microservices Cluster Topology
 
-Di dalam setiap Virtual Machine, trafik didistribusikan secara internal oleh Nginx menuju Process Manager (PM2).
+Di dalam setiap Virtual Machine, trafik didistribusikan secara internal oleh Nginx menuju Process Manager (PM2). Arsitektur internal aplikasi dibangun agar siap menopang skalabilitas *cloud-native*.
+
+```mermaid
+graph TD
+    %% Eksternal
+    Client(("💻 Vue SPA Client"))
+    
+    %% API Gateway Layer
+    Gateway{"🛡️ API Gateway\n[Port: 3000]"}
+    
+    %% Microservices Layer
+    subgraph "Microservices Cluster (Node.js)"
+        Auth["🔑 Auth Service\n[Port: 3001]"]
+        Product["🍔 Product Service\n[Port: 3002]"]
+        Order["🛒 Order Service\n[Port: 3003]"]
+        Notif["🔔 Notification Service\n[Port: 3004]"]
+        Analytics["📈 Analytics Service\n[gRPC:50051]"]
+    end
+    
+    %% Database Layer
+    DB[("🗄️ Master MySQL DB\n(sistrackv2)")]
+
+    %% Koneksi dan Jalur Komunikasi
+    Client <-->|HTTPS (REST)| Gateway
+    Client <-->|WSS (WebSocket)| Notif
+    
+    Gateway -->|Proxy /auth| Auth
+    Gateway -->|Proxy /products| Product
+    Gateway -->|Proxy /orders| Order
+    Gateway -.->|gRPC Protocol| Analytics
+    
+    Order -.->|Internal HTTP Trigger| Notif
+    
+    Auth ===> DB
+    Product ===> DB
+    Order ===> DB
+    Analytics ===> DB
+```
 
 | Layanan Internal | Port | Deskripsi Peran Teknis |
 | :--- | :---: | :--- |
