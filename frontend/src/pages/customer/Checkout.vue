@@ -97,7 +97,7 @@
             />
           </div>
 
-          <div class="form-group">
+          <div class="form-group" style="margin-top: 8px;">
             <label class="field-label">Metode Pembayaran</label>
             <div class="payment-options">
               <button
@@ -110,7 +110,7 @@
                   <circle cx="12" cy="12" r="2"/>
                   <path d="M6 12h.01M18 12h.01"/>
                 </svg>
-                Cash
+                Tunai / Kasir
               </button>
               <button
                 class="pay-opt"
@@ -121,9 +121,36 @@
                   <rect x="2" y="5" width="20" height="14" rx="2"/>
                   <line x1="2" y1="10" x2="22" y2="10"/>
                 </svg>
-                Transfer
+                Bank Transfer
               </button>
             </div>
+
+            <div v-if="paymentMethod === 'transfer'" class="transfer-panel">
+              <p class="panel-desc">Pilih bank tujuan untuk mendapatkan nomor Virtual Account eksklusif Anda.</p>
+              
+              <div class="bank-options">
+                <div class="bank-btn" :class="{ active: selectedBank === 'bca' }" @click="selectedBank = 'bca'">
+                  <div class="bank-name">BCA</div>
+                  <div class="bank-type">Virtual Account</div>
+                </div>
+                <div class="bank-btn" :class="{ active: selectedBank === 'mandiri' }" @click="selectedBank = 'mandiri'">
+                  <div class="bank-name">Mandiri</div>
+                  <div class="bank-type">Virtual Account</div>
+                </div>
+              </div>
+
+              <div class="va-display">
+                <div class="va-label">Nomor Virtual Account</div>
+                <div class="va-row">
+                  <div class="va-number">{{ virtualAccount }}</div>
+                  <button class="copy-btn" @click="copyVA" :class="{ copied: isCopied }">
+                    {{ isCopied ? 'Tersalin' : 'Salin' }}
+                  </button>
+                </div>
+                <div class="va-hint">Transfer tepat sejumlah <strong>Rp {{ formatPrice(total) }}</strong> agar pesanan langsung diteruskan ke dapur tanpa perlu konfirmasi kasir.</div>
+              </div>
+            </div>
+
           </div>
 
           <p v-if="err" class="form-err">{{ err }}</p>
@@ -163,6 +190,8 @@ const cart          = ref([])
 const customerName  = ref('')
 const phone         = ref('')
 const paymentMethod = ref('cash')
+const selectedBank  = ref('bca')
+const isCopied      = ref(false)
 const loading       = ref(false)
 const err           = ref('')
 const showNameError = ref(false)
@@ -187,6 +216,18 @@ onMounted(() => {
 const total = computed(() =>
   cart.value.reduce((s, i) => s + Number(i.price) * Number(i.qty), 0)
 )
+
+const virtualAccount = computed(() => {
+  const prefix = selectedBank.value === 'bca' ? '3901' : '8950'
+  const p = phone.value.replace(/\D/g, '') || '08123456789'
+  return `${prefix} ${p.slice(0,4)} ${p.slice(4,8)} ${p.slice(8)}`.trim()
+})
+
+const copyVA = () => {
+  navigator.clipboard.writeText(virtualAccount.value.replace(/\s/g, ''))
+  isCopied.value = true
+  setTimeout(() => isCopied.value = false, 2000)
+}
 
 const backToMenu = () => router.push('/menu')
 
@@ -230,7 +271,7 @@ const formatPrice = n =>
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap');
 
 /* ── PAGE ───────────────────────────────────────────── */
 .checkout-page {
@@ -614,6 +655,131 @@ const formatPrice = n =>
   background: var(--border);
   border-color: var(--text);
   color: var(--text);
+}
+
+/* ── TRANSFER PANEL ─────────────────────────────────── */
+.transfer-panel {
+  margin-top: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: slideDown 0.3s cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+
+.panel-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.bank-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.bank-btn {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: transparent;
+}
+
+.bank-btn:hover {
+  border-color: var(--text-muted);
+}
+
+.bank-btn.active {
+  border-color: var(--text);
+  background: rgba(22, 20, 15, 0.03);
+}
+
+.bank-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  font-family: 'Playfair Display', serif;
+}
+
+.bank-type {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.va-display {
+  background: rgba(22, 20, 15, 0.02);
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.va-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.va-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.va-number {
+  font-family: 'DM Sans', monospace;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.05em;
+}
+
+.copy-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.copy-btn:hover {
+  background: var(--text);
+  color: #fff;
+}
+
+.copy-btn.copied {
+  background: #34d399;
+  border-color: #34d399;
+  color: #fff;
+}
+
+.va-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 12px;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+  line-height: 1.4;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ── SUBMIT ─────────────────────────────────────────── */

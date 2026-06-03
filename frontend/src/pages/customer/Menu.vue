@@ -1,37 +1,15 @@
 <template>
   <div class="menu-page">
 
-    <!-- TOPBAR -->
-    <div class="topbar">
-      <div class="topbar-left">
-        <h1 class="page-title">Menu</h1>
-        <p class="page-sub">Pilih menu dan masukin ke cart</p>
-      </div>
-      <div class="topbar-right">
-        <div class="badge-meja">
-          <span class="meja-dot" />
-          Meja {{ seatNumber }}
+    <!-- UNIFIED COMMAND CENTER -->
+    <div class="command-center">
+      <div class="cc-top">
+        <div class="cc-title">
+          <h1 class="page-title">Menu</h1>
+          <p class="page-sub">Pilih menu dan masukin ke cart</p>
         </div>
-        <button class="btn-ghost" @click="reloadProducts">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
-            <path d="M21 3v5h-5"/>
-            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
-            <path d="M8 16H3v5"/>
-          </svg>
-          Refresh
-        </button>
-      </div>
-    </div>
 
-    <!-- BODY -->
-    <div class="body-grid">
-
-      <!-- LEFT: PRODUCTS -->
-      <div class="products-section">
-
-        <!-- FILTER BAR -->
-        <div class="filter-bar">
+        <div class="cc-actions">
           <div class="search-wrap">
             <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
@@ -43,28 +21,50 @@
               v-model="searchQuery"
             />
           </div>
-          <div class="categories">
-            <button
-              class="cat-btn"
-              :class="{ active: activeCategory === '' }"
-              @click="activeCategory = ''"
-            >Semua</button>
-            <button
-              class="cat-btn"
-              v-for="c in categories"
-              :key="c"
-              :class="{ active: activeCategory === c }"
-              @click="activeCategory = c"
-            >{{ c }}</button>
+
+          <div class="badge-meja">
+            <span class="meja-dot" />
+            Meja {{ seatNumber }}
           </div>
+
+          <button class="btn-ghost" @click="reloadProducts" title="Refresh">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+              <path d="M21 3v5h-5"/>
+              <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+              <path d="M8 16H3v5"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="cc-bottom">
+        <div class="categories">
+          <button
+            class="cat-btn"
+            :class="{ active: activeCategory === '' }"
+            @click="activeCategory = ''"
+          >Semua</button>
+          <button
+            class="cat-btn"
+            v-for="c in categories"
+            :key="c"
+            :class="{ active: activeCategory === c }"
+            @click="activeCategory = c"
+          >{{ c }}</button>
         </div>
 
-        <!-- PRODUCT COUNT -->
         <div class="result-meta" v-if="!loading && !error">
           <span class="count-label">{{ filteredProducts.length }} menu</span>
-          <span class="count-sep" v-if="activeCategory">·</span>
-          <span class="count-cat" v-if="activeCategory">{{ activeCategory }}</span>
         </div>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="body-grid">
+
+      <!-- LEFT: PRODUCTS -->
+      <div class="products-section">
 
         <!-- STATES -->
         <div v-if="loading" class="state-wrap">
@@ -210,15 +210,38 @@ const goCheckout = () => {
   font-family: 'DM Sans', sans-serif;
   min-height: 100vh;
   background: var(--bg);
-  padding: 28px 28px 48px;
+  padding: 0; /* Padding handled by internal layout */
+  display: flex;
+  flex-direction: column;
 }
 
-/* ── TOPBAR ─────────────────────────────────────────── */
-.topbar {
+/* ── COMMAND CENTER (HEADER) ────────────────────────── */
+.command-center {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(248, 246, 242, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 24px 28px 16px;
+  border-bottom: 1px solid var(--border);
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cc-top {
+  display: flex;
   justify-content: space-between;
-  margin-bottom: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.cc-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .page-title {
@@ -228,97 +251,25 @@ const goCheckout = () => {
   color: var(--text);
   letter-spacing: -0.03em;
   line-height: 1;
+  margin: 0;
 }
 
 .page-sub {
   font-size: 13px;
   color: var(--text-muted);
-  margin-top: 4px;
-  font-weight: 300;
+  font-weight: 400;
+  margin: 0;
 }
 
-.topbar-right {
+.cc-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-}
-
-.badge-meja {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 6px 14px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text);
-  letter-spacing: 0.04em;
-}
-
-.meja-dot {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
-}
-
-.btn-ghost {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 7px 14px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s, color 0.2s;
-  font-family: inherit;
-}
-
-.btn-ghost:hover {
-  background: var(--border);
-  color: var(--text);
-}
-
-/* ── BODY GRID ──────────────────────────────────────── */
-.body-grid {
-  display: grid;
-  grid-template-columns: 1fr 360px;
-  gap: 20px;
-  align-items: flex-start;
-}
-
-@media (max-width: 1100px) {
-  .body-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ── PRODUCTS SECTION ───────────────────────────────── */
-.products-section {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  background: transparent;
-  padding: 0;
-}
-
-/* ── FILTER BAR ─────────────────────────────────────── */
-.filter-bar {
-  display: flex;
-  flex-direction: column;
   gap: 12px;
 }
 
 .search-wrap {
   position: relative;
+  width: 260px;
 }
 
 .search-icon {
@@ -332,29 +283,83 @@ const goCheckout = () => {
 
 .search-input {
   width: 100%;
-  padding: 11px 16px 11px 38px;
-  border-radius: 12px;
+  padding: 10px 16px 10px 38px;
+  border-radius: 99px;
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--text);
   font-family: 'DM Sans', sans-serif;
   font-size: 13px;
-  font-weight: 400;
-  transition: border-color 0.2s;
+  font-weight: 500;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
 }
 
 .search-input::placeholder {
   color: var(--text-muted);
+  font-weight: 400;
 }
 
 .search-input:focus {
   outline: none;
-  border-color: var(--accent);
+  border-color: var(--text);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.badge-meja {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+
+.meja-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.btn-ghost {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+
+.btn-ghost:hover {
+  background: var(--border);
+  transform: rotate(15deg);
+}
+
+.cc-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .categories {
   display: flex;
-  gap: 7px;
+  gap: 8px;
   overflow-x: auto;
   padding-bottom: 2px;
   scrollbar-width: none;
@@ -363,22 +368,23 @@ const goCheckout = () => {
 .categories::-webkit-scrollbar { display: none; }
 
 .cat-btn {
-  padding: 5px 15px;
+  padding: 8px 18px;
   border-radius: 99px;
-  background: var(--surface);
+  background: transparent;
   border: 1px solid var(--border);
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.18s;
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
   font-family: inherit;
 }
 
 .cat-btn:hover {
-  background: var(--border);
+  background: rgba(22, 20, 15, 0.04);
   color: var(--text);
+  border-color: var(--text-muted);
 }
 
 .cat-btn.active {
@@ -387,32 +393,38 @@ const goCheckout = () => {
   color: #fff;
 }
 
-/* ── RESULT META ────────────────────────────────────── */
 .result-meta {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 0 2px;
 }
 
 .count-label {
-  font-size: 11px;
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text-muted);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-style: italic;
 }
 
-.count-sep {
-  color: var(--border);
-  font-size: 11px;
+/* ── BODY GRID ──────────────────────────────────────── */
+.body-grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 24px;
+  align-items: flex-start;
+  padding: 24px 28px 48px;
 }
 
-.count-cat {
-  font-size: 11px;
-  color: var(--text);
-  font-weight: 600;
-  letter-spacing: 0.04em;
+@media (max-width: 1100px) {
+  .body-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── PRODUCTS SECTION ───────────────────────────────── */
+.products-section {
+  display: flex;
+  flex-direction: column;
 }
 
 /* ── STATES ─────────────────────────────────────────── */
@@ -460,8 +472,8 @@ const goCheckout = () => {
 /* ── PRODUCTS GRID ──────────────────────────────────── */
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
 }
 
 .empty-state {
@@ -477,13 +489,13 @@ const goCheckout = () => {
 /* ── CART SIDEBAR ───────────────────────────────────── */
 .cart-sidebar {
   position: sticky;
-  top: 84px;
+  top: 130px; /* Offset for the new sticky command center */
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 18px;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: calc(100vh - 110px);
+  max-height: calc(100vh - 150px);
   box-shadow: var(--shadow);
 }
 /* hide scrollbar for sleekness */
