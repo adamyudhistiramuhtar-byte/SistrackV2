@@ -171,10 +171,15 @@ const submitOrder = async () => {
         price: Number(i.price),
         qty: Number(i.qty),
       })),
+    }, {
+      headers: {
+        'x-session-token': localStorage.getItem('sessionToken') || ''
+      }
     })
 
     localStorage.removeItem('cart')
     localStorage.removeItem('seatNumber')
+    localStorage.removeItem('sessionToken')
     router.push('/seat')
   } catch (e) {
     err.value = e?.response?.data?.message || 'Gagal mengirim pesanan'

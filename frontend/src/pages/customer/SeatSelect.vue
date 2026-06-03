@@ -132,9 +132,19 @@ const pickSeat = (n) => {
   error.value = ''
 }
 
-const startOrder = () => {
+const startOrder = async () => {
   if (!canStart.value) {
     error.value = taken.value.has(Number(seat.value)) ? 'Meja sudah terpakai' : 'Nomor meja harus 1 sampai 50'
+    return
+  }
+
+  try {
+    const res = await api.post('/session/seat', { seatNumber: Number(seat.value) })
+    if (res.data && res.data.data && res.data.data.token) {
+      localStorage.setItem('sessionToken', res.data.data.token)
+    }
+  } catch (err) {
+    error.value = err?.response?.data?.message || 'Gagal memulai sesi meja'
     return
   }
 
