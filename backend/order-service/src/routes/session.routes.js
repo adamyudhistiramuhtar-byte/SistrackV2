@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
-const { AppError } = require('../../../../shared/errorHandler');
+const { AppError } = require('../../../shared/errorHandler');
 const Seat = require('../models/seat.model');
 
 // POST /session/seat — Customer: create seat session

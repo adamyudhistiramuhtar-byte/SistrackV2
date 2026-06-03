@@ -2,9 +2,9 @@
 const express = require('express');
 const router = express.Router();
 const { createOrderRules } = require('../validators/order.validator');
-const { AppError } = require('../../../../shared/errorHandler');
+const { AppError } = require('../../../shared/errorHandler');
 const { STATUS_TRANSITIONS, STATUS_LABELS } = require('../constants/orderStatus');
-const db = require('../../../../shared/db');
+const db = require('../../../shared/db');
 const orderService = require('../services/order.service');
 
 const {

@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/product.controller');
-const db = require('../../../../shared/db');
-const { AppError } = require('../../../../shared/errorHandler');
+const db = require('../../../shared/db');
+const { AppError } = require('../../../shared/errorHandler');
 
 // IMP-010: Update GET /available dengan filter dan paginasi
 router.get('/available', async (req, res, next) => {
