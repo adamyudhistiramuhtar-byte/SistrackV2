@@ -6,7 +6,13 @@
           <h1 class="h1">Admin Login</h1>
           <p class="p" style="margin-top: 8px;">Masuk untuk kelola pesanan dan laporan</p>
         </div>
-        <span class="kbd">Admin</span>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+          <span class="kbd">Admin</span>
+          <router-link to="/seat" class="customer-link">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Kembali ke Seat
+          </router-link>
+        </div>
       </div>
 
       <div class="divider"></div>
@@ -72,3 +78,19 @@ const login = async () => {
   }
 }
 </script>
+
+<style scoped>
+.customer-link {
+  font-size: 12px;
+  color: var(--muted);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s;
+}
+.customer-link:hover {
+  color: white;
+}
+</style>
+

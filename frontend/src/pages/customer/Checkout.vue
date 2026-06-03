@@ -226,3 +226,17 @@ const formatPrice = n =>
   font-weight:900;
 }
 </style>
+
+<style scoped>
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+</style>
+

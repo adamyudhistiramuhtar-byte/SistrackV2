@@ -16,13 +16,22 @@ defineEmits(['pick'])
 .seat{
   height: 42px;
   border-radius: 12px;
-  border: 1px solid var(--border);
-  background: rgb(255, 255, 255);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
   font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.seat:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .seat.active{
-  background: var(--black);
-  color: var(--white);
+  background: white;
+  color: black;
+  border-color: white;
+  transform: scale(1.05);
 }
 </style>
