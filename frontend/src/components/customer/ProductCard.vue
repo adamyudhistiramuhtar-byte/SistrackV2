@@ -41,6 +41,7 @@ const format = (n) =>
   border: 1px solid var(--border);
   border-radius: 16px;
   overflow: hidden;
+  box-shadow: var(--shadow);
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 

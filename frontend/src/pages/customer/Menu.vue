@@ -484,6 +484,7 @@ const goCheckout = () => {
   overflow-y: auto;
   overflow-x: hidden;
   max-height: calc(100vh - 110px);
+  box-shadow: var(--shadow);
 }
 /* hide scrollbar for sleekness */
 .cart-sidebar::-webkit-scrollbar {

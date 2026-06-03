@@ -29,8 +29,8 @@
         </div>
 
         <div class="sticky-panel">
-          <div style="font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: #f0d9b0;">Nomor meja</div>
-          <p style="margin-top: 6px; font-size: 13px; color: rgba(240,217,176,0.3);">Boleh klik grid atau ketik manual</p>
+          <div style="font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--text);">Nomor meja</div>
+          <p style="margin-top: 6px; font-size: 13px; color: var(--text-muted);">Boleh klik grid atau ketik manual</p>
 
           <div style="margin-top: 16px;">
             <input
@@ -52,7 +52,7 @@
             Mulai Pesan
           </button>
 
-          <p v-if="error" style="color: #e07060; margin-top: 10px; font-size: 12px;">
+          <p v-if="error" style="color: var(--danger); margin-top: 10px; font-size: 12px;">
             {{ error }}
           </p>
         </div>
@@ -196,6 +196,7 @@ const startOrder = async () => {
   border: 1px solid var(--border);
   border-radius: 18px;
   padding: 24px;
+  box-shadow: var(--shadow);
 }
 .field-input {
   width: 100%;
