@@ -1,27 +1,28 @@
 <div align="center">
   <img src="https://raw.githubusercontent.com/adamyudhistiramuhtar-byte/SistrackV2/main/frontend/public/vite.svg" width="120" alt="SisTrackV2 Logo" />
   
-  <h1>SisTrackV2</h1>
-  <p><strong>Enterprise-Grade Microservices Ordering & Seating Management System</strong></p>
+  <h1>SisTrackV2 Enterprise</h1>
+  <p><strong>Cloud-Native Microservices Ordering & Seating Management System with High Availability</strong></p>
 
   <p>
     <a href="https://github.com/adamyudhistiramuhtar-byte/SistrackV2/commits/main"><img src="https://img.shields.io/badge/Build-Passing-brightgreen.svg?style=for-the-badge&logo=github" alt="Build Status"></a>
-    <a href="https://github.com/adamyudhistiramuhtar-byte/SistrackV2/releases"><img src="https://img.shields.io/badge/Version-1.1.0-blue.svg?style=for-the-badge" alt="Version"></a>
+    <a href="https://github.com/adamyudhistiramuhtar-byte/SistrackV2/releases"><img src="https://img.shields.io/badge/Version-2.0.0--Enterprise-blue.svg?style=for-the-badge" alt="Version"></a>
     <img src="https://img.shields.io/badge/Architecture-Microservices-orange.svg?style=for-the-badge" alt="Architecture">
-    <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="License">
+    <img src="https://img.shields.io/badge/Cloud-Microsoft_Azure-0089D6.svg?style=for-the-badge&logo=microsoftazure&logoColor=white" alt="Azure">
+    <img src="https://img.shields.io/badge/Availability-99.95%25-brightgreen.svg?style=for-the-badge" alt="SLA">
   </p>
 
   <p>
     <img src="https://img.shields.io/badge/Vue.js-3.5-4FC08D.svg?style=flat-square&logo=vuedotjs&logoColor=white" alt="Vue">
-    <img src="https://img.shields.io/badge/Node.js-18.x-339933.svg?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js">
-    <img src="https://img.shields.io/badge/MySQL-8.0-4479A1.svg?style=flat-square&logo=mysql&logoColor=white" alt="MySQL">
+    <img src="https://img.shields.io/badge/Node.js-20.x_LTS-339933.svg?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js">
+    <img src="https://img.shields.io/badge/MySQL-Flexible_Server-4479A1.svg?style=flat-square&logo=mysql&logoColor=white" alt="MySQL">
     <img src="https://img.shields.io/badge/gRPC-Enabled-244C5A.svg?style=flat-square&logo=grpc&logoColor=white" alt="gRPC">
     <img src="https://img.shields.io/badge/Socket.io-Realtime-010101.svg?style=flat-square&logo=socketdotio&logoColor=white" alt="Socket.io">
-    <img src="https://img.shields.io/badge/PM2-Daemon-2B037A.svg?style=flat-square&logo=pm2&logoColor=white" alt="PM2">
+    <img src="https://img.shields.io/badge/Nginx-Load_Balanced-009639.svg?style=flat-square&logo=nginx&logoColor=white" alt="Nginx">
   </p>
 
   <p>
-    <i>Sistem manajemen restoran otonom berskala industri yang memfasilitasi pelanggan untuk memesan kursi dan hidangan secara mandiri (self-service), didukung dengan Dasbor Admin analitik yang presisi.</i>
+    <i>Sistem manajemen restoran otonom berskala industri yang memfasilitasi pemesanan mandiri (self-service), didukung arsitektur Cloud Load Balancing aktif-aktif, isolasi jaringan privat, dan Dasbor Admin analitik presisi via gRPC.</i>
   </p>
 </div>
 
@@ -29,159 +30,128 @@
 
 ## 📑 Table of Contents
 - [Overview](#-overview)
+- [Enterprise Cloud Architecture](#-enterprise-cloud-architecture)
 - [Key Features](#-key-features)
-- [Architecture Design](#-architecture-design)
-- [Project Structure](#-project-structure)
-- [Quick Start Guide](#-quick-start-guide)
-  - [Prerequisites](#1-prerequisites)
-  - [Installation](#2-installation)
-  - [Database Setup](#3-database-setup)
-  - [Running the Services](#4-running-the-services)
-- [Documentation & API Reference](#-documentation--api-reference)
-- [Testing](#-testing)
-- [Deployment (Azure Cloud)](#-deployment-azure-cloud)
+- [Microservices Cluster Topology](#-microservices-cluster-topology)
+- [Deployment & Infrastructure Documentation](#-deployment--infrastructure-documentation)
+- [Quick Start Guide (Local)](#-quick-start-guide-local)
+- [Testing & Validation](#-testing--validation)
 
 ---
 
 ## 🌐 Overview
 
-**SisTrackV2** didesain ulang dari model *monolith* menuju pola arsitektur **Microservices** terdistribusi. Kami memecah domain logika bisnis yang kompleks menjadi enam (*6*) layanan berkinerja tinggi yang beroperasi secara mandiri. Keuntungan dari desain ini adalah pemisahan *concern*, ketersediaan sistem yang tinggi (*High Availability*), dan toleransi kesalahan (*Fault Tolerance*) jika terjadi *downtime* parsial.
+**SisTrackV2 Enterprise** didesain ulang dari model *monolith* konvensional menuju pola arsitektur **Cloud-Native Microservices** terdistribusi. Kami memecah domain logika bisnis yang kompleks menjadi enam (*6*) layanan berkinerja tinggi yang beroperasi secara independen. 
 
-Sistem mengeksploitasi protokol HTTP/REST, `gRPC` (Protobuf), dan `WebSocket` secara bersamaan guna menyesuaikan pola komunikasi terbaik antar-*service*.
+Sistem ini dieksekusi di atas infrastruktur **Microsoft Azure** menggunakan **Azure Standard Load Balancer (L4)** dan **Availability Sets** untuk mencapai *High Availability* dan ketahanan terhadap kegagalan perangkat keras (Fault Tolerance).
+
+Sistem mengeksploitasi protokol HTTP/REST, `gRPC` (Protobuf), dan `WebSocket` secara bersamaan guna mengoptimalkan pola komunikasi antar-*service* di level jaringan lokal (VNet).
+
+---
+
+## 🌩️ Enterprise Cloud Architecture
+
+Sistem di-deploy dengan standar industri tingkat tinggi di Microsoft Azure (Region: Southeast Asia).
+
+```mermaid
+graph TD
+    Internet["🌐 Public Internet\n(Client Browsers)"] -->|TCP Port 80| LB_PIP["📍 Azure Public IP\n20.24.181.196\n(Static, Standard SKU)"]
+    
+    LB_PIP --> LB["⚖️ Azure Standard Load Balancer\n(Algorithm: 5-tuple hash)"]
+    
+    subgraph "Sistrack Availability Set (sistrack-avset)"
+        LB -->|"Health Probe: 5s\nFailover: <10s"| VM1["🖥️ VM-01 (10.0.0.4)\nNginx Reverse Proxy\n+ PM2 (6 Microservices)"]
+        LB -->|"Health Probe: 5s\nFailover: <10s"| VM2["🖥️ VM-02 (10.0.0.5)\nNginx Reverse Proxy\n+ PM2 (6 Microservices)"]
+    end
+    
+    subgraph "Private VNet Subnet"
+        VM1 ===>|Private Link| DB["🗄️ Azure MySQL Flexible Server\n(No Public Access)"]
+        VM2 ===>|Private Link| DB
+    end
+```
+
+### Infrastructure Highlights:
+1. **Azure Standard Load Balancer**: Menggunakan algoritma 5-tuple hash tanpa *session persistence* untuk mendistribusikan jutaan koneksi secara adil dan *stateless*.
+2. **Availability Set Isolation**: VM-01 dan VM-02 ditempatkan pada rak fisik, *power supply*, dan *network switch* yang berbeda (2 Fault Domains) untuk menjamin SLA 99.95%.
+3. **Database VNet Integration**: Azure MySQL dikunci secara perimeter. Tidak ada akses publik yang diizinkan; koneksi database hanya diterima dari subnet web VM.
+4. **Automated Health Probes**: Load Balancer secara otonom memonitor port 80 pada setiap VM setiap 5 detik. Jika sebuah VM gagal merespons, trafik dialihkan secara otomatis ke VM yang sehat (*Zero-Downtime Failover*).
 
 ---
 
 ## ✨ Key Features
 
 ### 🛡️ Enterprise Security First
-- **Zero-Trust Input**: Validasi muatan (*payload*) agresif di tingkat *Gateway* dan *Service* menggunakan `express-validator`.
-- **DDoS Mitigation**: Tiga tingkat perlindungan *Rate Limiting* (Longgar, Sedang, Ketat) untuk menghalau injeksi *Brute-Force*.
-- **Cryptographic Session**: Tokenisasi sesi kursi pelanggan menggunakan `JWT (JSON Web Token)` untuk mencegah kebocoran (*hijacking*) pesanan antar meja.
-- **Header Hardening**: Modul `Helmet.js` memblokir vektor serangan XSS, Clickjacking, dan MIME sniffing.
+- **Zero-Trust Network**: VM-02 secara arsitektur tidak memiliki IP Publik, membuatnya mustahil diretas langsung dari internet. Seluruh trafik wajib melalui *Network Security Group (NSG)* dan Load Balancer.
+- **Cryptographic Session**: Tokenisasi sesi kursi pelanggan menggunakan `JWT (JSON Web Token)` dengan enkripsi HMAC SHA-256. Karena arsitekturnya *stateless*, token ini dapat divalidasi oleh VM mana pun yang menerima trafik dari Load Balancer.
+- **DDoS Mitigation**: Perlindungan *Rate Limiting* di tingkat API Gateway.
 
 ### ⚡ Blazing Fast Inter-Service Communication
-- **Real-Time Notification Engine**: Pembaruan status order dari Dapur ke Layar Pelanggan direalisasikan dalam latensi *sub-millisecond* menggunakan `Socket.IO`.
-- **gRPC Analytics Protocol**: Komunikasi performa ekstrem (menggunakan representasi biner) dari *Gateway* ke *Analytics Service*, menjamin panel BI Admin tetap ringan dan responsif tanpa membebani layanan transaksi order.
+- **Real-Time Notification Engine**: Pembaruan status order direalisasikan menggunakan `Socket.IO`. Nginx Proxy dikonfigurasi khusus untuk merutekan *Upgrade Headers* HTTP/1.1 demi kelancaran WebSockets di lingkungan *Load-Balanced*.
+- **gRPC Analytics Protocol**: Komunikasi biner performa ekstrem dari *Gateway* ke *Analytics Service*, menjamin panel BI Admin responsif meskipun volume transaksi membludak.
 
 ### 🚦 Business Logic Integrity
 - **Finite State Machine**: Pola transisional ketat pada siklus pesanan (`pending` $\rightarrow$ `confirmed` $\rightarrow$ `preparing` $\rightarrow$ `ready` $\rightarrow$ `completed`) dijamin di tingkat API.
-- **Automated Database DevOps**: Infrastruktur *Database-as-Code* (`npm run db:migrate`) yang mereplikasi tabel dan relasi kompleks kapanpun *server* diinisialisasi.
+- **Database-as-Code**: Skema tersinkronisasi otomatis kapanpun VM direplikasi (`npm run db:migrate`).
 
 ---
 
-## 🏛️ Architecture Design
+## 🏛️ Microservices Cluster Topology
 
-Arsitektur sistem dibangun agar siap menopang skalabilitas *cloud-native*. Sebuah *Gateway* bertindak sebagai *Ingress Controller* yang mendistribusikan trafik (*reverse proxy*) menuju mikro-layanan di belakang layar.
+Di dalam setiap Virtual Machine, trafik didistribusikan secara internal oleh Nginx menuju Process Manager (PM2).
 
-```mermaid
-graph TD
-    %% Eksternal
-    Client(("💻 Vue SPA Client"))
-    
-    %% API Gateway Layer
-    Gateway{"🛡️ API Gateway\n[Port: 3000]"}
-    
-    %% Microservices Layer
-    subgraph "Microservices Cluster (Node.js)"
-        Auth["🔑 Auth Service\n[Port: 3001]"]
-        Product["🍔 Product Service\n[Port: 3002]"]
-        Order["🛒 Order Service\n[Port: 3003]"]
-        Notif["🔔 Notification Service\n[Port: 3004]"]
-        Analytics["📈 Analytics Service\n[gRPC:50051]"]
-    end
-    
-    %% Database Layer
-    DB[("🗄️ Master MySQL DB\n(sistrackv2)")]
-
-    %% Koneksi dan Jalur Komunikasi
-    Client <==>|HTTPS (REST)| Gateway
-    Client <==>|WSS (WebSocket)| Notif
-    
-    Gateway ==>|Proxy /auth| Auth
-    Gateway ==>|Proxy /products| Product
-    Gateway ==>|Proxy /orders| Order
-    Gateway -.->|gRPC Protocol| Analytics
-    
-    Order -.->|Internal HTTP Trigger| Notif
-    
-    Auth ===> DB
-    Product ===> DB
-    Order ===> DB
-    Analytics ===> DB
-```
+| Layanan Internal | Port | Deskripsi Peran Teknis |
+| :--- | :---: | :--- |
+| `gateway` | 3000 | Ingress sentral. Menangani CORS, request routing, dan proteksi limitasi trafik. |
+| `auth-service` | 3001 | Modul identitas. Penerbit dan validator JSON Web Tokens (JWT). |
+| `product-service` | 3002 | Modul *Inventory*. Mengelola data relasional master menu. |
+| `order-service` | 3003 | *Core engine* transaksi dan manajemen state tempat duduk (seats). |
+| `notification-service` | 3004 | Event-driven module via Socket.io untuk *real-time push notifications*. |
+| `analytics-service` | 3005 | *Business Intelligence*. Mengkomputasi agregat penjualan harian via gRPC. |
 
 ---
 
-## 📁 Project Structure
+## 📖 Deployment & Infrastructure Documentation
 
-SisTrackV2 menggunakan pendekatan arsitektur *Monorepo*, memusatkan *codebase* seluruh infrastruktur dalam satu ruang kontrol yang rapi:
+Dokumentasi level korporasi (*Runbooks*) tersedia untuk menguraikan pedoman operasional dan desain arsitektur proyek ini di Azure Cloud.
 
-<details>
-<summary><b>Klik untuk melihat Struktur Lengkap</b></summary>
-<br>
-
-```text
-SistrackV2/
-├── backend/                       # ⚙️ Lapisan Microservices
-│   ├── analytics-service/         # Agregasi data (Business Intelligence) via gRPC
-│   ├── auth-service/              # Manajer Kredensial & Autentikasi (Bcrypt/JWT)
-│   ├── gateway/                   # Ingress Controller kustom & Rate Limiting
-│   ├── notification-service/      # WebSocket Event Emitter untuk sinkronisasi Real-Time
-│   ├── order-service/             # Puncak komputasi logika transaksi pesanan
-│   ├── product-service/           # Layanan Manajemen Katalog Produk
-│   └── shared/                    # Utilitas terpusat (Logger, Security, DB Handler)
-│
-├── frontend/                      # 🎨 Lapisan User Interface
-│   ├── src/
-│   │   ├── api/                   # Network Call Interceptors (Axios) & Socket Client
-│   │   ├── components/            # Pustaka Komponen (Atomic Design)
-│   │   ├── layouts/               # Kerangka Halaman (Admin vs Customer Layout)
-│   │   └── pages/                 # Routing Antarmuka
-│   └── vite.config.js             # Konfigurasi Build Pipeline + Vitest
-│
-├── database/                      # 🗃️ Lapisan Automasi Infrastruktur Basis Data
-│   ├── migrations/                # Schema SQL (.sql)
-│   ├── seeds/                     # Skrip pembuat data awal (Seeder)
-│   └── migrate.js                 # Algoritma eksekusi migrasi otomatis
-│
-├── docs/                          # 📖 Pustaka Pengetahuan (Knowledge Base)
-└── ecosystem.config.js            # 🎛️ Manifes Daemon Process Manager (PM2)
-```
-</details>
+- [**🎓 Laporan Akhir Tugas Besar (Final Report)**](docs/Laporan_Tugas_Besar_SistrackV2.md) — Dokumen presentasi komprehensif.
+- [**🏗️ Azure Architecture Design**](docs/cloud-infrastructure/AzureArchitecture.md) — Cetak biru infrastruktur, VNet, dan NSG.
+- [**⚖️ Load Balancer & Compliance Analysis**](docs/04-load-balancing-and-compliance.md) — Mekanika failover dan pembuktian pemenuhan standar enterprise.
+- [**🚀 Deployment & Migration Guide**](docs/cloud-infrastructure/DeploymentGuide.md) — SOP replikasi VM dan automasi CLI.
+- [**🔧 Infrastructure Deep-Dive**](docs/cloud-infrastructure/Infrastructure.md) — Matriks spesifikasi server dan *network flows*.
+- [**📋 Operations & Maintenance Runbook**](docs/cloud-infrastructure/OperationsRunbook.md) — Prosedur respon insiden (P1-P4) dan *Disaster Recovery Plan*.
+- [**🔍 Troubleshooting Matrix**](docs/cloud-infrastructure/Troubleshooting.md) — Diagnosis anomali log Nginx, PM2, dan Load Balancer.
 
 ---
 
-## 🚀 Quick Start Guide
+## 🚀 Quick Start Guide (Local)
 
-Didesain untuk *Developer Experience (DX)* yang mulus. Anda dapat menghidupkan ekosistem masif ini di lokal hanya dalam hitungan menit.
+Didesain untuk *Developer Experience (DX)* yang mulus di lingkungan lokal sebelum dilempar ke Azure.
 
 ### 1. Prerequisites
-Pastikan mesin Anda memiliki spesifikasi berikut:
-- **Node.js** (Versi `18.x LTS` atau yang lebih baru).
+- **Node.js** (Versi `20.x LTS`).
 - **MySQL Server** (Berjalan di latar belakang pada Port `3306`).
 - **PM2** (Opsional untuk lingkungan Production): `npm install -g pm2`
 
 ### 2. Installation
-Kloning repositori dan instal dependensi root. Berkat integrasi skrip, ini secara otomatis akan menginstal modul di seluruh *sub-folder* microservices dan frontend.
 ```bash
 git clone https://github.com/adamyudhistiramuhtar-byte/SistrackV2.git
 cd SistrackV2
-
 npm install
 ```
 
 ### 3. Database Setup
-Buat satu *schema* database kosong bernama `sistrackv2` melalui terminal MySQL Anda (`CREATE DATABASE sistrackv2;`). Setelah itu, serahkan pembentukan 7 relasi tabel kompleks pada alat migrasi internal kami:
+Buat *schema* database kosong bernama `sistrackv2` di MySQL.
 ```bash
-# Mengeksekusi tabel admins, products, orders, dll.
+# Menjalankan migrasi DDL otomatis
 npm run db:migrate
 
-# Mengisinya dengan 1 Akun Admin, 12 Kursi, dan puluhan Menu dummy
+# Mengisi DML awal (Admin, Seats, Products)
 npm run db:seed
 ```
 
 ### 4. Running the Services
-Gunakan skrip `concurrently` untuk menyalakan API Gateway dan kelima *microservice* secara paralel dalam 1 jendela konsol:
+Gunakan skrip *concurrently* untuk menghidupkan ekosistem:
 ```bash
 # Terminal 1: Nyalakan Cluster Backend
 npm run dev:backend
@@ -189,23 +159,14 @@ npm run dev:backend
 # Terminal 2: Nyalakan Vue Frontend Server
 npm run dev:frontend
 ```
-> **🌐 Akses Web**: Buka `http://localhost:5173` di peramban Anda.
-> **🔐 Akses Dasbor**: `/admin/login` (Gunakan email: `admin@sistrack.local` | sandi: `admin123`)
+> **🌐 Akses Web**: Buka `http://localhost:5173`
+> **🔐 Akses Dasbor**: `/admin/login` (Email: `admin@sistrack.local` | Sandi: `admin123`)
 
 ---
 
-## 📖 Documentation & API Reference
+## 🧪 Testing & Validation
 
-Dokumentasi level korporasi tersedia untuk menguraikan pedoman teknis mendalam proyek ini.
-- [**📘 Layer 1: Panduan Proyek Utama**](docs/01-existing-project/README.md) (Dokumentasi API, Endpoint, Struktur ERD).
-- [**🛠️ Layer 2: Riwayat Code Review & Improvement**](docs/02-improvement/IMPROVEMENT.md) (Rincian teknis penyelesaian 16 isu keamanan, kualitas, dan skalabilitas).
-- [**☁️ Layer 3: Panduan Cloud Computing (SOP)**](docs/TUGAS_BESAR_WORKFLOW.md) (Manuskrip manual migrasi arsitektur ini menuju Microsoft Azure Cloud).
-
----
-
-## 🧪 Testing
-
-Sistem dilengkapi dengan kerangka pengujian terisolasi untuk memastikan integrasi terjamin bebas cacat regresi (*regression-free*).
+Sistem dilengkapi dengan kerangka pengujian terisolasi bebas cacat regresi (*regression-free*).
 ```bash
 # Menjalankan In-Memory Service Mock Testing (Jest)
 npm run test:backend
@@ -215,39 +176,8 @@ npm run test:frontend
 ```
 
 ---
-
-## ☁️ Deployment (Azure Cloud)
-
-Ekosistem *Microservices* ini di-deploy pada **Microsoft Azure** menggunakan arsitektur **Multi-VM + Azure Standard Load Balancer** untuk *High Availability*:
-
-```mermaid
-graph LR
-    Internet["🌐 Internet"] --> LB["⚖️ Azure Load Balancer"]
-    LB --> VM1["🖥️ VM-01\nNginx + PM2"]
-    LB --> VM2["🖥️ VM-02\nNginx + PM2"]
-    VM1 --> DB["🗄️ Azure MySQL\n(Private VNet)"]
-    VM2 --> DB
-```
-
-| Komponen | Teknologi |
-| :--- | :--- |
-| **Load Balancer** | Azure Standard LB (L4, 5-tuple hash) |
-| **Web Server** | Nginx Reverse Proxy (2 instances) |
-| **Application** | PM2 Cluster (6 Microservices per VM) |
-| **Database** | Azure MySQL Flexible Server (PaaS) |
-| **Network** | Azure VNet + Private Subnet Isolation |
-
-📖 **Dokumentasi Lengkap:**
-- [**⚖️ Load Balancer & Compliance**](docs/04-load-balancing-and-compliance.md)
-- [**🏗️ Azure Architecture**](docs/cloud-infrastructure/AzureArchitecture.md)
-- [**🚀 Deployment Guide**](docs/cloud-infrastructure/DeploymentGuide.md)
-- [**🔧 Infrastructure Reference**](docs/cloud-infrastructure/Infrastructure.md)
-- [**🔍 Troubleshooting**](docs/cloud-infrastructure/Troubleshooting.md)
-- [**📋 Operations Runbook**](docs/cloud-infrastructure/OperationsRunbook.md)
-
----
 <p align="center">
   <br>
-  <b>SisTrackV2</b> &copy; 2026. <br>
-  <i>Built with absolute engineering precision.</i>
+  <b>SisTrackV2 Enterprise</b> &copy; 2026. <br>
+  <i>Engineered for Absolute Fault Tolerance.</i>
 </p>
