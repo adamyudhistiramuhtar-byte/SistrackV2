@@ -218,15 +218,32 @@ npm run test:frontend
 
 ## ☁️ Deployment (Azure Cloud)
 
-Ekosistem *Microservices* ini dioptimasi penuh agar dapat di-deploy ke dalam satu Virtual Machine (VM) menggunakan `PM2`. Cukup atur kredensial Anda di file `.env`, kemudian jalankan:
-```bash
-# Memutar semua sistem di background sebagai Daemon OS
-npm run start
+Ekosistem *Microservices* ini di-deploy pada **Microsoft Azure** menggunakan arsitektur **Multi-VM + Azure Standard Load Balancer** untuk *High Availability*:
 
-# Menutup sistem
-npm run stop
+```mermaid
+graph LR
+    Internet["🌐 Internet"] --> LB["⚖️ Azure Load Balancer"]
+    LB --> VM1["🖥️ VM-01\nNginx + PM2"]
+    LB --> VM2["🖥️ VM-02\nNginx + PM2"]
+    VM1 --> DB["🗄️ Azure MySQL\n(Private VNet)"]
+    VM2 --> DB
 ```
-*Gunakan **Nginx** sebagai Reverse Proxy untuk mengekspos aplikasi Anda ke Port 80 (HTTP) atau 443 (HTTPS) di Production.*
+
+| Komponen | Teknologi |
+| :--- | :--- |
+| **Load Balancer** | Azure Standard LB (L4, 5-tuple hash) |
+| **Web Server** | Nginx Reverse Proxy (2 instances) |
+| **Application** | PM2 Cluster (6 Microservices per VM) |
+| **Database** | Azure MySQL Flexible Server (PaaS) |
+| **Network** | Azure VNet + Private Subnet Isolation |
+
+📖 **Dokumentasi Lengkap:**
+- [**⚖️ Load Balancer & Compliance**](docs/04-load-balancing-and-compliance.md)
+- [**🏗️ Azure Architecture**](docs/cloud-infrastructure/AzureArchitecture.md)
+- [**🚀 Deployment Guide**](docs/cloud-infrastructure/DeploymentGuide.md)
+- [**🔧 Infrastructure Reference**](docs/cloud-infrastructure/Infrastructure.md)
+- [**🔍 Troubleshooting**](docs/cloud-infrastructure/Troubleshooting.md)
+- [**📋 Operations Runbook**](docs/cloud-infrastructure/OperationsRunbook.md)
 
 ---
 <p align="center">

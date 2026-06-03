@@ -1,6 +1,6 @@
 # Dokumentasi Implementasi Load Balancer & Pemenuhan Standar Tugas Besar
 
-Dokumen ini disusun sebagai panduan komprehensif dan bahan presentasi untuk membuktikan bahwa proyek **SistrackV2** telah 100% memenuhi dan bahkan melampaui standar Tugas Besar Cloud Computing.
+Dokumen ini disusun sebagai panduan komprehensif dan bahan presentasi untuk membuktikan bahwa proyek **SistrackV2** telah 100% memenuhi dan melampaui standar Tugas Besar Cloud Computing.
 
 ---
 
@@ -12,76 +12,151 @@ Berdasarkan pengumuman Tugas Besar, berikut adalah evaluasi *checklist* pemenuha
 | :--- | :---: | :--- |
 | **Deployment ke Layanan Cloud** | ✅ SELESAI | Aplikasi di-deploy menggunakan **Microsoft Azure** (Azure for Students). |
 | **Gunakan Aplikasi Lama** | ✅ SELESAI | Menggunakan proyek **SistrackV2** yang direfaktor menjadi arsitektur berbasis *Microservices*. |
-| **1. Web Server** | ✅ SELESAI | Menggunakan **Nginx** sebagai Web Server (Reverse Proxy) & Node.js untuk mengeksekusi logika backend. |
-| **2. Database Server** | ✅ SELESAI | Menggunakan layanan PaaS **Azure Database for MySQL Flexible Server**, terpisah dari Web Server untuk skalabilitas data independen. |
-| **3. Load Balancer** | ✅ SELESAI | Menerapkan arsitektur **Hybrid Load Balancing** Lapis 7 (Application Layer) menggunakan Nginx dan modul Cluster PM2 (Detail di Bagian 2). |
-| **Akses Online Publik** | ✅ SELESAI | Aplikasi terikat (bind) pada IP Public VM Azure dan port HTTP (80), sehingga dapat diakses oleh publik secara global. |
+| **1. Web Server** | ✅ SELESAI | Menggunakan **Nginx** sebagai Web Server (Reverse Proxy) pada 2 VM Ubuntu Server. |
+| **2. Database Server** | ✅ SELESAI | Menggunakan layanan PaaS **Azure Database for MySQL Flexible Server**, terpisah dari Web Server. |
+| **3. Load Balancer** | ✅ SELESAI | Menggunakan **Azure Standard Load Balancer** dengan 2 VM di Backend Pool, Health Probe HTTP, dan distribusi Round-Robin. |
+| **Akses Online Publik** | ✅ SELESAI | Aplikasi dapat diakses via IP Public Load Balancer. |
 
-**KESIMPULAN:** Proyek ini **SUDAH SANGAT MEMENUHI STANDAR**. Proyek ini tidak menggunakan infrastruktur monolitik sederhana, melainkan menggunakan pola desain arsitektur modern (Virtual Networks terisolasi, Microservices gRPC/REST, dan Process Load Balancing), yang akan memberikan nilai *plus* di mata Dosen.
+| Dokumentasi Wajib | Status | Lokasi |
+| :--- | :---: | :--- |
+| **Arsitektur cloud yang digunakan** | ✅ SELESAI | [AzureArchitecture.md](cloud-infrastructure/AzureArchitecture.md) |
+| **Konfigurasi layanan** | ✅ SELESAI | [Infrastructure.md](cloud-infrastructure/Infrastructure.md) |
+| **Proses deployment** | ✅ SELESAI | [DeploymentGuide.md](cloud-infrastructure/DeploymentGuide.md) |
+| **Bukti aplikasi berhasil diakses online** | ✅ SELESAI | Screenshot di laporan |
+
+| Materi Presentasi/Demo | Status | Referensi |
+| :--- | :---: | :--- |
+| **Arsitektur cloud yang digunakan** | ✅ | Multi-Tier: Azure LB → 2 VM → Azure MySQL PaaS |
+| **Cara deployment aplikasi** | ✅ | Git Clone → npm install → npm run build → PM2 Start |
+| **Pembagian layanan server** | ✅ | 6 Microservices (Gateway, Auth, Product, Order, Notification, Analytics) |
+| **Implementasi load balancer** | ✅ | Azure Standard LB + Health Probe + Backend Pool |
+| **Hasil akhir aplikasi berjalan di cloud** | ✅ | Live Demo via LB Public IP |
 
 ---
 
-## BAGIAN 2: DOKUMENTASI KOMPLEKS IMPLEMENTASI LOAD BALANCER
+## BAGIAN 2: IMPLEMENTASI LOAD BALANCER
 
-Berbeda dengan proyek konvensional yang mungkin menggunakan Azure Application Gateway (yang berbiaya sangat mahal), proyek ini mendemonstrasikan pemahaman mendalam tentang *Application-Level Load Balancing*. 
+### Arsitektur Load Balancing
 
-Kami mengimplementasikan **Two-Tier Hybrid Load Balancing (Load Balancing 2 Lapis)** yang sangat efisien dan lazim digunakan di *startup* teknologi modern:
+SistrackV2 menggunakan **Azure Standard Load Balancer** yang beroperasi pada **Layer 4 (Transport Layer)** untuk mendistribusikan trafik TCP/HTTP ke dua buah Virtual Machine identik.
 
-### Lapis 1: Nginx sebagai L7 Reverse Proxy Load Balancer
-Nginx dipasang di garda terdepan (port 80) sebagai *Reverse Proxy* dan *Load Balancer* statis. 
-- **Tugas Utama**: Menerima seluruh trafik (HTTP/WebSockets) dari internet luar.
-- **Routing Cerdas**: Nginx memilah *request*. Jika *request* menuju `/`, beban diarahkan ke *frontend* (file Vue statis). Jika *request* menuju `/api/`, trafik diteruskan (proxy pass) secara internal ke *Gateway Microservice*.
-- **Efisiensi**: Membebaskan *backend* Node.js dari melayani gambar atau file statis, sehingga performa *backend* fokus penuh pada pengolahan API (komputasi data).
-
-### Lapis 2: PM2 Internal Cluster Module (Node.js Native Load Balancing)
-Node.js secara bawaan bekerja secara *Single-Threaded* (satu jalur proses). Ini menjadi masalah *bottleneck* jika banyak pesanan (*order*) masuk bersamaan. Untuk mengatasi ini, kita menggunakan **PM2 Process Manager dengan Cluster Mode**.
-- **Mekanisme**: Di dalam file `ecosystem.config.js`, konfigurasi `gateway` (layanan utama yang menerima semua trafik dari Nginx) diubah ke `exec_mode: 'cluster'` dengan `instances: 2` (atau 'max').
-- **Algoritma Load Balancing**: PM2 mengambil alih *port binding*. Saat *request* HTTP datang dari Nginx ke Port 3000, **PM2 (menggunakan algoritma Round-Robin internal TCP)** akan mendistribusikan *request* tersebut secara seimbang di antara *Instance* 1 atau *Instance* 2 dari Gateway API.
-- **Dampak Kinerja**: Jika salah satu *instance Gateway* sibuk (misalnya sedang menunggu balasan gRPC dari *Analytics Service*), *request* pesanan dari pelanggan berikutnya tidak akan mengantre (blocked), melainkan langsung ditangkap dan diproses oleh *instance Gateway* kedua.
-
-### Cuplikan Bukti Kode (Evidence untuk Laporan & Demo)
-
-**1. Bukti Konfigurasi PM2 Cluster (ecosystem.config.js)**
-Tunjukkan blok kode ini kepada dosen saat mendemonstrasikan Load Balancer:
-```javascript
-module.exports = {
-  apps: [
-    {
-      name: 'gateway',
-      script: './backend/gateway/src/index.js',
-      instances: 2,           // <-- INI ADALAH IMPLEMENTASI LOAD BALANCER
-      exec_mode: 'cluster',   // <-- MENJALANKAN DUA APLIKASI PARALEL
-      watch: false,
-      env: { PORT: 3000 },
-    },
-    // ... microservices lainnya berjalan normal
-  ],
-};
-```
-
-**2. Bukti Konfigurasi Nginx (Reverse Proxy)**
-Tunjukkan bagaimana Nginx bertindak sebagai *traffic router*:
-```nginx
-location /api/ {
-    # Meneruskan trafik ke Load Balancer internal PM2 di port 3000
-    proxy_pass http://localhost:3000/api/;
+```mermaid
+graph TD
+    Internet["🌐 Internet"] --> LB_PIP["📍 Public IP: sistrack-lb-pip<br/>(Standard, Static)"]
+    LB_PIP --> LB["⚖️ Azure Standard Load Balancer<br/>sistrack-lb"]
     
-    # Header khusus agar Real-Time Socket.IO tidak terputus saat di-load balance
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection 'upgrade';
-    proxy_set_header Host $host;
-}
+    LB -->|"Round-Robin<br/>5-tuple hash"| VM1["🖥️ VM-01: sistrack-web-vm<br/>IP: 10.0.1.4<br/>Nginx + PM2 (6 services)"]
+    LB -->|"Round-Robin<br/>5-tuple hash"| VM2["🖥️ VM-02: sistrack-web-vm2<br/>IP: 10.0.1.5<br/>Nginx + PM2 (6 services)"]
+    
+    VM1 --> DB["🗄️ Azure MySQL Flexible Server<br/>sistrack-mysql-prod<br/>(Private VNet Access Only)"]
+    VM2 --> DB
+    
+    LB -.->|"Health Probe<br/>HTTP GET / :80<br/>Every 5s"| VM1
+    LB -.->|"Health Probe<br/>HTTP GET / :80<br/>Every 5s"| VM2
 ```
+
+### Komponen Load Balancer
+
+| Komponen | Konfigurasi | Fungsi |
+| :--- | :--- | :--- |
+| **Frontend IP** | `sistrack-lb-pip` (Standard, Static) | Titik masuk tunggal dari internet |
+| **Backend Pool** | `sistrack-backend-pool` (VM-01 + VM-02) | Kumpulan server yang melayani request |
+| **Health Probe** | HTTP GET `/` port 80, interval 5s, threshold 2 | Memantau kesehatan setiap VM |
+| **LB Rule** | TCP port 80 → port 80, Round-Robin | Aturan distribusi trafik |
+| **Availability Set** | `sistrack-avset` (2 FD, 5 UD) | Jaminan VM di rak fisik berbeda |
+
+### Algoritma Distribusi
+
+Azure Standard Load Balancer menggunakan algoritma **5-tuple hash** untuk mendistribusikan koneksi:
+
+```
+Hash = f(Source IP, Source Port, Dest IP, Dest Port, Protocol)
+```
+
+Setiap koneksi TCP baru menghasilkan hash baru, dan hash tersebut menentukan VM mana yang akan menerima koneksi. Ini menghasilkan distribusi yang **statistically even** di antara seluruh anggota backend pool.
+
+### Mekanisme Health Probe
+
+```mermaid
+sequenceDiagram
+    participant LB as ⚖️ Azure Load Balancer
+    participant VM1 as 🖥️ VM-01 (Nginx :80)
+    participant VM2 as 🖥️ VM-02 (Nginx :80)
+    
+    Note over LB: Normal Operation
+    loop Every 5 seconds
+        LB->>VM1: GET / HTTP/1.1
+        VM1-->>LB: 200 OK ✅
+        LB->>VM2: GET / HTTP/1.1
+        VM2-->>LB: 200 OK ✅
+    end
+    Note over LB: Distribusi: 50% VM-01, 50% VM-02
+    
+    Note over VM2: ❌ VM-02 Down!
+    LB->>VM2: GET / HTTP/1.1
+    VM2--xLB: No Response (Failure 1)
+    LB->>VM2: GET / HTTP/1.1
+    VM2--xLB: No Response (Failure 2)
+    
+    Note over LB: VM-02 removed from rotation
+    Note over LB: Distribusi: 100% VM-01
+    
+    Note over VM2: ✅ VM-02 Recovered!
+    LB->>VM2: GET / HTTP/1.1
+    VM2-->>LB: 200 OK ✅
+    Note over LB: VM-02 re-added to rotation
+    Note over LB: Distribusi: 50% VM-01, 50% VM-02
+```
+
+### High Availability (Ketersediaan Tinggi)
+
+| Skenario Kegagalan | Dampak | Recovery Time |
+| :--- | :--- | :--- |
+| VM-01 mati | VM-02 menangani 100% trafik | **~10 detik** (2x probe interval) |
+| VM-02 mati | VM-01 menangani 100% trafik | **~10 detik** |
+| Kedua VM mati | Service down | Manual restart diperlukan |
+| Azure maintenance | Satu VM di-reboot | **0 detik** (Availability Set menjamin Update Domain berbeda) |
+
+### Mengapa Arsitektur Ini Stateless (Tidak Memerlukan Sticky Session)
+
+| Aspek | Analisis |
+| :--- | :--- |
+| **Auth JWT** | Token self-contained, bisa divalidasi oleh VM manapun |
+| **Customer Session** | JWT di header `X-Session-Token`, stateless |
+| **Database** | Semua state tersimpan di Azure MySQL (shared) |
+| **Frontend** | File statis identik di semua VM |
 
 ---
 
-## BAGIAN 3: PANDUAN MATERI PRESENTASI/DEMO (PITCH DECK)
+## BAGIAN 3: PANDUAN MATERI PRESENTASI/DEMO
 
 Gunakan kerangka ini saat Anda presentasi di depan dosen:
 
-1. **Pembukaan**: "Proyek SistrackV2 ini di-deploy menggunakan **Microsoft Azure** dengan pendekatan arsitektur modern yang memisahkan Compute (VM Ubuntu) dan Database (Azure MySQL Flexible Server) demi keamanan dan skalabilitas."
-2. **Arsitektur Cloud**: "Kami menempatkan VM kami di *Web Subnet* yang bisa diakses publik, namun meletakkan Azure MySQL kami di *Private Subnet (VNet Integration)* sehingga Mustahil ditembus dari luar internet."
-3. **Pembagian Layanan**: "Tidak seperti aplikasi biasa, *backend* Node.js kami kami pecah menjadi 6 buah *Microservices* (Gateway, Auth, Order, Product, Notification, dan Analytics). Mereka berkomunikasi secara terisolasi, bahkan menggunakan protokol gRPC untuk kecepatan tinggi."
-4. **Implementasi Load Balancer**: "Untuk Load Balancer, kami menggunakan dua lapisan. Nginx di depan sebagai penyeimbang beban L7/Reverse Proxy, yang kemudian melempar trafik ke API Gateway. API Gateway sendiri dikonfigurasi menggunakan **PM2 Cluster Mode (Internal Load Balancer)** dengan algoritma Round-Robin, sehingga melipatgandakan kemampuan VM kami melayani pesanan restoran tanpa hambatan (*bottleneck*)."
-5. **Penutup/Demo**: Tunjukkan layar *browser* aplikasi yang bisa diakses dari IP Cloud, lalu tunjukkan terminal dengan mengetik `pm2 status` untuk memperlihatkan bahwa aplikasi `gateway` memiliki **2 baris id** (bukti nyata *load balancing* sedang berjalan).
+### Slide 1 — Arsitektur Cloud
+"Kami men-deploy SistrackV2 menggunakan **Microsoft Azure** dengan arsitektur **Multi-Tier**: Azure Load Balancer di depan sebagai penerima trafik, dua Virtual Machine sebagai compute layer, dan Azure MySQL Flexible Server sebagai database terisolasi di private subnet."
+
+### Slide 2 — Pembagian Layanan
+"Backend kami dipecah menjadi **6 Microservices** independen (Gateway, Auth, Product, Order, Notification, Analytics). Masing-masing berjalan di port terpisah dan dikelola oleh PM2 Process Manager."
+
+### Slide 3 — Load Balancer
+"Kami menggunakan **Azure Standard Load Balancer** yang mendistribusikan trafik HTTP (port 80) ke dua VM menggunakan algoritma 5-tuple hash. Health Probe memeriksa kesehatan setiap VM setiap 5 detik. Jika satu VM down, seluruh trafik otomatis dialihkan ke VM yang sehat dalam waktu ~10 detik."
+
+### Slide 4 — Demo Failover
+"Untuk membuktikan High Availability, kami akan mematikan Nginx di VM-02, lalu menunjukkan bahwa website tetap bisa diakses karena Load Balancer otomatis mengarahkan semua trafik ke VM-01."
+
+### Slide 5 — Hasil Akhir
+"Aplikasi SistrackV2 dapat diakses secara publik melalui IP Load Balancer. Fitur yang berjalan termasuk pemilihan meja, pemesanan makanan real-time, pembayaran transfer, dan dashboard admin dengan analytics gRPC."
+
+---
+
+## BAGIAN 4: DOKUMENTASI TAMBAHAN
+
+Dokumentasi teknis lengkap tersedia di folder `docs/cloud-infrastructure/`:
+
+| Dokumen | Isi | Link |
+| :--- | :--- | :--- |
+| **AzureArchitecture.md** | Diagram arsitektur, resource inventory, VNet/subnet design, LB config, NSG rules, cost estimation | [Buka](cloud-infrastructure/AzureArchitecture.md) |
+| **DeploymentGuide.md** | Step-by-step migration dari Single VM ke Multi-VM + LB, Azure CLI commands, zero-downtime strategy | [Buka](cloud-infrastructure/DeploymentGuide.md) |
+| **Infrastructure.md** | VM matrix, port mapping, Nginx config, PM2 inventory, database schema, monitoring, scaling | [Buka](cloud-infrastructure/Infrastructure.md) |
+| **Troubleshooting.md** | Pemecahan masalah LB, Nginx, PM2, Database, SSL, DNS, NSG | [Buka](cloud-infrastructure/Troubleshooting.md) |
+| **OperationsRunbook.md** | Deployment checklist, maintenance, incident response, rollback, disaster recovery | [Buka](cloud-infrastructure/OperationsRunbook.md) |
