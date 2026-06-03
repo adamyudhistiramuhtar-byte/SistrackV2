@@ -120,8 +120,8 @@ graph TD
     DB[("🗄️ Master MySQL DB\n(sistrackv2)")]
 
     %% Koneksi dan Jalur Komunikasi
-    Client <-->|HTTPS (REST)| Gateway
-    Client <-->|WSS (WebSocket)| Notif
+    Client -->|HTTPS REST| Gateway
+    Client -->|WSS WebSocket| Notif
     
     Gateway -->|Proxy /auth| Auth
     Gateway -->|Proxy /products| Product
@@ -130,10 +130,10 @@ graph TD
     
     Order -.->|Internal HTTP Trigger| Notif
     
-    Auth ===> DB
-    Product ===> DB
-    Order ===> DB
-    Analytics ===> DB
+    Auth -->|Read/Write| DB
+    Product -->|Read/Write| DB
+    Order -->|Read/Write| DB
+    Analytics -->|Read/Write| DB
 ```
 
 | Layanan Internal | Port | Deskripsi Peran Teknis |
