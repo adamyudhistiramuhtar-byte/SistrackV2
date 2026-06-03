@@ -13,6 +13,9 @@
     "test:frontend": "cd frontend && npm test"
   },
   "dependencies": {
-    "pm2": "^5.3.1"
+    "pm2": "^5.3.1",
+    "mysql2": "^3.9.7",
+    "dotenv": "^16.4.5",
+    "bcryptjs": "^2.4.3"
   }
 }

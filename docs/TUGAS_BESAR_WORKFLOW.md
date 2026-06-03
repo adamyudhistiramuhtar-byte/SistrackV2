@@ -119,11 +119,11 @@ sudo apt update && sudo apt upgrade -y
 # 2. Instal Web Server (Nginx), Git, dan MySQL Client
 sudo apt install nginx git mysql-client -y
 
-# 3. Instal Node.js versi 18 menggunakan NVM (Node Version Manager)
+# 3. Instal Node.js versi 20 menggunakan NVM (Node Version Manager)
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 source ~/.bashrc
-nvm install 18
-node -v   # Pastikan outputnya menampilkan v18.x.x
+nvm install 20
+node -v   # Pastikan outputnya menampilkan v20.x.x
 
 # 4. Instal PM2 (Process Manager) secara global agar microservices tetap hidup di background
 npm install -g pm2
