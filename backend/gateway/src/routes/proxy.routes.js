@@ -53,7 +53,11 @@ module.exports = (app) => {
       // prefer rawBody when present to avoid double-parsing / quoting issues
       const payload = typeof req.rawBody === 'string' && req.rawBody.length ? req.rawBody : JSON.stringify(req.body || {});
       const resp = await axios.post(`${process.env.AUTH_SERVICE_URL}/auth/login`, payload, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-session-token': req.headers['x-session-token'] || '',
+          'authorization': req.headers['authorization'] || ''
+        },
         timeout: 5000,
       });
       return res.status(resp.status).json(resp.data);
@@ -88,7 +92,11 @@ module.exports = (app) => {
       console.log('[GATEWAY ORDER CREATE] forwarding to', process.env.ORDER_SERVICE_URL, 'rawBody=', req.rawBody);
       const payload = typeof req.rawBody === 'string' && req.rawBody.length ? req.rawBody : JSON.stringify(req.body || {});
       const resp = await axios.post(`${process.env.ORDER_SERVICE_URL}/orders`, payload, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-session-token': req.headers['x-session-token'] || '',
+          'authorization': req.headers['authorization'] || ''
+        },
         timeout: 5000,
       });
       return res.status(resp.status).json(resp.data);
@@ -113,7 +121,11 @@ module.exports = (app) => {
     try {
       const payload = typeof req.rawBody === 'string' && req.rawBody.length ? req.rawBody : JSON.stringify(req.body || {});
       const resp = await axios.post(`${process.env.ORDER_SERVICE_URL}/session/seat`, payload, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-session-token': req.headers['x-session-token'] || '',
+          'authorization': req.headers['authorization'] || ''
+        },
         timeout: 5000,
       });
       return res.status(resp.status).json(resp.data);
