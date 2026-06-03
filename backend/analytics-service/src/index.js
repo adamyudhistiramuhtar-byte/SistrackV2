@@ -6,7 +6,7 @@ const protoLoader = require('@grpc/proto-loader');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors'); // IMP-015: Tambah CORS untuk Admin
-const validateEnv = require('../../../shared/validateEnv');
+const validateEnv = require('../../shared/validateEnv');
 
 // IMP-001: Validasi Environment untuk Analytics Service
 validateEnv(['PORT', 'DB_HOST', 'DB_USER', 'DB_NAME']);

@@ -2,12 +2,12 @@
 require('dotenv').config();
 
 // IMP-001: Validasi env vars
-const validateEnv = require('../../../shared/validateEnv');
+const validateEnv = require('../../shared/validateEnv');
 validateEnv(['PORT', 'DB_HOST', 'DB_USER', 'DB_NAME']);
 
 const express = require('express');
 const cors = require('cors');
-const { errorHandler, notFoundHandler } = require('../../../shared/errorHandler');
+const { errorHandler, notFoundHandler } = require('../../shared/errorHandler');
 const authRoutes = require('./routes/auth.routes');
 
 const app = express();
