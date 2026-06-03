@@ -139,9 +139,9 @@ const startOrder = async () => {
   }
 
   try {
-    const res = await api.post('/session/seat', { seatNumber: Number(seat.value) })
-    if (res.data && res.data.data && res.data.data.token) {
-      localStorage.setItem('sessionToken', res.data.data.token)
+    const res = await api.post('/session/seat', { seat_number: Number(seat.value) })
+    if (res.data && res.data.token) {
+      localStorage.setItem('sessionToken', res.data.token)
     }
   } catch (err) {
     error.value = err?.response?.data?.message || 'Gagal memulai sesi meja'
