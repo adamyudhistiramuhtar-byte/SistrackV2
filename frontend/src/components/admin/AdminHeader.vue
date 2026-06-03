@@ -33,11 +33,15 @@ defineEmits(['logout'])
 .sub{ font-size: 13px; color: var(--muted); margin-top: 6px; }
 .logout{
   border: 1px solid var(--border);
-  background: #0f0f10;
+  background: var(--surface);
   color: var(--text);
   border-radius: 12px;
   padding: 10px 12px;
   font-weight: 800;
   cursor: pointer;
+  transition: all 0.2s;
+}
+.logout:hover {
+  background: var(--border);
 }
 </style>

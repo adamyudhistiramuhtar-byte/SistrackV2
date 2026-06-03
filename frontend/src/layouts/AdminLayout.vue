@@ -1,10 +1,30 @@
 <template>
-  <div class="min-h-screen bg-gray-100 text-black">
-    <header class="p-4 bg-black text-white">
+  <div class="admin-layout">
+    <header class="admin-header">
       Admin Panel
     </header>
-    <main class="p-6">
+    <main class="admin-main">
       <router-view />
     </main>
   </div>
 </template>
+
+<style scoped>
+.admin-layout {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+}
+.admin-header {
+  padding: 16px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+.admin-main {
+  padding: 24px;
+  flex: 1;
+}
+</style>

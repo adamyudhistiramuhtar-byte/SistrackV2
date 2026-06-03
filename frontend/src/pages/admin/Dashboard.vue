@@ -238,37 +238,42 @@ onBeforeUnmount(() => {
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 14px;
-  background: rgba(255,255,255,.03);
+  background: var(--surface);
 }
 .ord-title{ font-weight: 900; }
-.ord-sub{ font-size: 12px; color: var(--muted); margin-top: 4px; }
+.ord-sub{ font-size: 12px; color: var(--text-muted); margin-top: 4px; }
 .status{
   font-size: 12px;
   font-weight: 900;
   border-radius: 999px;
   padding: 6px 10px;
   border: 1px solid var(--border);
-  color: var(--muted);
+  color: var(--text-muted);
+  background: var(--bg);
 }
 .status.completed{
   border-color: rgba(52,211,153,.35);
-  color: rgba(52,211,153,.95);
+  color: #10b981;
+  background: rgba(52,211,153,.1);
 }
 .mini{ margin-top: 10px; display:flex; flex-direction:column; gap: 6px; }
 .mini-row{
   display:flex;
   justify-content:space-between;
   font-size: 12px;
-  color: var(--muted);
+  color: var(--text-muted);
 }
 .btn-ghost{
   border: 1px solid var(--border);
-  background: #0f0f10;
+  background: var(--surface);
   color: var(--text);
   border-radius: 12px;
   padding: 10px 12px;
   font-weight: 900;
   cursor: pointer;
+}
+.btn-ghost:hover:not(:disabled) {
+  background: var(--border);
 }
 .btn-ghost:disabled{
   opacity: .55;

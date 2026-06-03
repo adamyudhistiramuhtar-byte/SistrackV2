@@ -481,6 +481,16 @@ const goCheckout = () => {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 18px;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(100vh - 110px);
+}
+/* hide scrollbar for sleekness */
+.cart-sidebar::-webkit-scrollbar {
+  display: none;
+}
+.cart-sidebar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 </style>

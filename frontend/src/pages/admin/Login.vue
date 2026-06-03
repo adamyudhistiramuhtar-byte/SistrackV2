@@ -82,7 +82,7 @@ const login = async () => {
 <style scoped>
 .customer-link {
   font-size: 12px;
-  color: var(--muted);
+  color: var(--text-muted);
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -90,7 +90,7 @@ const login = async () => {
   transition: all 0.2s;
 }
 .customer-link:hover {
-  color: white;
+  color: var(--text);
 }
 </style>
 
