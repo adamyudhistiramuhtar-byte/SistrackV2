@@ -7,6 +7,8 @@ module.exports = {
     {
       name: 'gateway',
       script: './backend/gateway/src/index.js',
+      instances: 2,
+      exec_mode: 'cluster',
       watch: false,
       env: { PORT: 3000 },
     },
