@@ -1,63 +1,106 @@
-# 🍽️ SisTrackV2 - Enterprise Ordering & Seating Management System
+<div align="center">
+  <img src="https://raw.githubusercontent.com/adamyudhistiramuhtar-byte/SistrackV2/main/frontend/public/vite.svg" width="120" alt="SisTrackV2 Logo" />
+  
+  <h1>SisTrackV2</h1>
+  <p><strong>Enterprise-Grade Microservices Ordering & Seating Management System</strong></p>
 
-![Version](https://img.shields.io/badge/version-1.1.0-blue.svg?cacheSeconds=2592000)
-![Architecture](https://img.shields.io/badge/architecture-microservices-orange.svg)
-![Vue](https://img.shields.io/badge/Vue.js-3.5-4FC08D.svg?logo=vue.js)
-![Node.js](https://img.shields.io/badge/Node.js-18.x-339933.svg?logo=node.js)
-![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1.svg?logo=mysql)
-![gRPC](https://img.shields.io/badge/gRPC-Enabled-244C5A.svg?logo=grpc)
-![Socket.io](https://img.shields.io/badge/Socket.io-Realtime-010101.svg?logo=socket.io)
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+  <p>
+    <a href="https://github.com/adamyudhistiramuhtar-byte/SistrackV2/commits/main"><img src="https://img.shields.io/badge/Build-Passing-brightgreen.svg?style=for-the-badge&logo=github" alt="Build Status"></a>
+    <a href="https://github.com/adamyudhistiramuhtar-byte/SistrackV2/releases"><img src="https://img.shields.io/badge/Version-1.1.0-blue.svg?style=for-the-badge" alt="Version"></a>
+    <img src="https://img.shields.io/badge/Architecture-Microservices-orange.svg?style=for-the-badge" alt="Architecture">
+    <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="License">
+  </p>
 
-**SisTrackV2** adalah sebuah sistem manajemen restoran modern berskala *enterprise* yang memfasilitasi pelanggan untuk memesan kursi dan hidangan secara mandiri (*self-service*), serta menyediakan panel Dasbor Admin yang canggih untuk pemantauan penjualan *real-time*. 
+  <p>
+    <img src="https://img.shields.io/badge/Vue.js-3.5-4FC08D.svg?style=flat-square&logo=vuedotjs&logoColor=white" alt="Vue">
+    <img src="https://img.shields.io/badge/Node.js-18.x-339933.svg?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js">
+    <img src="https://img.shields.io/badge/MySQL-8.0-4479A1.svg?style=flat-square&logo=mysql&logoColor=white" alt="MySQL">
+    <img src="https://img.shields.io/badge/gRPC-Enabled-244C5A.svg?style=flat-square&logo=grpc&logoColor=white" alt="gRPC">
+    <img src="https://img.shields.io/badge/Socket.io-Realtime-010101.svg?style=flat-square&logo=socketdotio&logoColor=white" alt="Socket.io">
+    <img src="https://img.shields.io/badge/PM2-Daemon-2B037A.svg?style=flat-square&logo=pm2&logoColor=white" alt="PM2">
+  </p>
 
-Sistem ini didesain menggunakan pola arsitektur **Microservices** yang terdistribusi secara independen, memisah domian kompleks menjadi enam layanan berkinerja tinggi yang berkomunikasi asinkron via gRPC dan REST, demi memastikan ketersediaan tinggi (*High Availability*) dan ketahanan yang absolut.
+  <p>
+    <i>Sistem manajemen restoran otonom berskala industri yang memfasilitasi pelanggan untuk memesan kursi dan hidangan secara mandiri (self-service), didukung dengan Dasbor Admin analitik yang presisi.</i>
+  </p>
+</div>
 
 ---
 
-## 🌟 Daftar Fitur Unggulan
-
-- **🔐 Robust Security System**: Mengimplementasikan *Helmet* untuk HTTP Header dinamis, mitigasi eksploitasi berbasis CORS dengan spesifikasi *Allowed Origins* berlapis, validasi input agresif via `express-validator`, serta 3 lapis perlindungan *Rate Limiting* guna menetralisir ancaman *Brute-Force* dan serangan DDoS.
-- **🛡️ Secure Seat Session Authentication**: Sistem *checkout* inovatif berbasis Token JWT (JSON Web Token) yang mengikat sesi pengguna secara kryptografik dengan nomor meja, mencegah manipulasi payload POST yang merugikan pesanan pengguna lain.
-- **⚡ Real-Time Notification Engine**: Dibangun di atas WebSocket (Socket.IO) yang di-trigger oleh Internal HTTP. Mampu mem-push *updates* status pesanan kepada perangkat pelanggan tanpa memerlukan metode *polling* yang berat, mengurangi beban *network* 80%.
-- **📊 High-Performance Analytics (gRPC)**: Menyajikan agregasi laporan pendapatan harian secara *blazing fast*. Integrasi antara *API Gateway* dan *Analytics Service* dijamin menggunakan `Protobuf` (Protocol Buffers) dan RPC, yang secara logikal terisolasi dari *Order Service* untuk menghindari potensi *bottleneck* DB.
-- **🚦 Smart State Machine**: Logika pesanan yang dijamin secara terstruktur `(pending -> confirmed -> preparing -> ready -> completed)` agar *state* sistem tetap *pure* dan menghindari mutasi data yang ilegal oleh Admin.
-- **🛠️ Automated Database DevOps**: Dilengkapi skrip kustom untuk sinkronisasi Database Migrations dan Seeder cerdas, yang menjamin replikasi skema seragam mulai dari *Local* hingga *Azure Cloud*.
+## 📑 Table of Contents
+- [Overview](#-overview)
+- [Key Features](#-key-features)
+- [Architecture Design](#-architecture-design)
+- [Project Structure](#-project-structure)
+- [Quick Start Guide](#-quick-start-guide)
+  - [Prerequisites](#1-prerequisites)
+  - [Installation](#2-installation)
+  - [Database Setup](#3-database-setup)
+  - [Running the Services](#4-running-the-services)
+- [Documentation & API Reference](#-documentation--api-reference)
+- [Testing](#-testing)
+- [Deployment (Azure Cloud)](#-deployment-azure-cloud)
 
 ---
 
-## 🏛️ Arsitektur Sistem (Microservices)
+## 🌐 Overview
 
-Sistem Backend di-deploy secara komprehensif menggunakan modul **PM2 Ecosystem**, yang merutekan interaksi antar *service* dalam infrastruktur lokal (*localhost*) maupun di VNet Azure.
+**SisTrackV2** didesain ulang dari model *monolith* menuju pola arsitektur **Microservices** terdistribusi. Kami memecah domain logika bisnis yang kompleks menjadi enam (*6*) layanan berkinerja tinggi yang beroperasi secara mandiri. Keuntungan dari desain ini adalah pemisahan *concern*, ketersediaan sistem yang tinggi (*High Availability*), dan toleransi kesalahan (*Fault Tolerance*) jika terjadi *downtime* parsial.
+
+Sistem mengeksploitasi protokol HTTP/REST, `gRPC` (Protobuf), dan `WebSocket` secara bersamaan guna menyesuaikan pola komunikasi terbaik antar-*service*.
+
+---
+
+## ✨ Key Features
+
+### 🛡️ Enterprise Security First
+- **Zero-Trust Input**: Validasi muatan (*payload*) agresif di tingkat *Gateway* dan *Service* menggunakan `express-validator`.
+- **DDoS Mitigation**: Tiga tingkat perlindungan *Rate Limiting* (Longgar, Sedang, Ketat) untuk menghalau injeksi *Brute-Force*.
+- **Cryptographic Session**: Tokenisasi sesi kursi pelanggan menggunakan `JWT (JSON Web Token)` untuk mencegah kebocoran (*hijacking*) pesanan antar meja.
+- **Header Hardening**: Modul `Helmet.js` memblokir vektor serangan XSS, Clickjacking, dan MIME sniffing.
+
+### ⚡ Blazing Fast Inter-Service Communication
+- **Real-Time Notification Engine**: Pembaruan status order dari Dapur ke Layar Pelanggan direalisasikan dalam latensi *sub-millisecond* menggunakan `Socket.IO`.
+- **gRPC Analytics Protocol**: Komunikasi performa ekstrem (menggunakan representasi biner) dari *Gateway* ke *Analytics Service*, menjamin panel BI Admin tetap ringan dan responsif tanpa membebani layanan transaksi order.
+
+### 🚦 Business Logic Integrity
+- **Finite State Machine**: Pola transisional ketat pada siklus pesanan (`pending` $\rightarrow$ `confirmed` $\rightarrow$ `preparing` $\rightarrow$ `ready` $\rightarrow$ `completed`) dijamin di tingkat API.
+- **Automated Database DevOps**: Infrastruktur *Database-as-Code* (`npm run db:migrate`) yang mereplikasi tabel dan relasi kompleks kapanpun *server* diinisialisasi.
+
+---
+
+## 🏛️ Architecture Design
+
+Arsitektur sistem dibangun agar siap menopang skalabilitas *cloud-native*. Sebuah *Gateway* bertindak sebagai *Ingress Controller* yang mendistribusikan trafik (*reverse proxy*) menuju mikro-layanan di belakang layar.
 
 ```mermaid
 graph TD
-    %% Entitas Eksternal
-    Client[("💻 Browser Client (Vue 3)")]
+    %% Eksternal
+    Client(("💻 Vue SPA Client"))
     
     %% API Gateway Layer
-    Gateway{"🛡️ API Gateway (Port 3000)\nReverse Proxy & Rate Limiter"}
+    Gateway{"🛡️ API Gateway\n[Port: 3000]"}
     
     %% Microservices Layer
-    subgraph "Microservices Cluster"
-        Auth["🔑 Auth Service (:3001)\nJWT & Admin Credentials"]
-        Product["🍔 Product Service (:3002)\nMenu, Category, Stok"]
-        Order["🛒 Order Service (:3003)\nState Machine & Session"]
-        Notif["🔔 Notification Service (:3004)\nWebSocket & Socket.io"]
-        Analytics["📈 Analytics Service\n(HTTP:3006 | gRPC:50051)"]
+    subgraph "Microservices Cluster (Node.js)"
+        Auth["🔑 Auth Service\n[Port: 3001]"]
+        Product["🍔 Product Service\n[Port: 3002]"]
+        Order["🛒 Order Service\n[Port: 3003]"]
+        Notif["🔔 Notification Service\n[Port: 3004]"]
+        Analytics["📈 Analytics Service\n[gRPC:50051]"]
     end
     
     %% Database Layer
-    DB[("🗄️ Shared MySQL DB\n(sistrackv2)")]
+    DB[("🗄️ Master MySQL DB\n(sistrackv2)")]
 
-    %% Jalur Komunikasi
-    Client <==>|HTTPS REST| Gateway
-    Client <==>|WebSocket WSS| Notif
+    %% Koneksi dan Jalur Komunikasi
+    Client <==>|HTTPS (REST)| Gateway
+    Client <==>|WSS (WebSocket)| Notif
     
-    Gateway ==>|Proxy /api/auth| Auth
-    Gateway ==>|Proxy /api/products| Product
-    Gateway ==>|Proxy /api/orders & /api/session| Order
-    Gateway -.->|gRPC Channel (Protobuf)| Analytics
+    Gateway ==>|Proxy /auth| Auth
+    Gateway ==>|Proxy /products| Product
+    Gateway ==>|Proxy /orders| Order
+    Gateway -.->|gRPC Protocol| Analytics
     
     Order -.->|Internal HTTP Trigger| Notif
     
@@ -69,111 +112,125 @@ graph TD
 
 ---
 
-## 📁 Pemetaan Repositori (Folder Structure)
+## 📁 Project Structure
 
-Proyek ini menggunakan filosofi *Monorepo* yang mewadahi selurh basis *Backend*, *Frontend*, dan *DevOps Script* dalam satu rumah logikal.
+SisTrackV2 menggunakan pendekatan arsitektur *Monorepo*, memusatkan *codebase* seluruh infrastruktur dalam satu ruang kontrol yang rapi:
+
+<details>
+<summary><b>Klik untuk melihat Struktur Lengkap</b></summary>
+<br>
 
 ```text
 SistrackV2/
-├── backend/                       # ⚙️ Lapisan Microservices Node.js/Express
-│   ├── analytics-service/         # Service gRPC (Port 50051) untuk agregasi data BI
-│   ├── auth-service/              # Manajer Kredensial & Autentikasi (Bcrypt)
-│   ├── gateway/                   # Ingress Controller kustom berbasis http-proxy-middleware
-│   ├── notification-service/      # WebSocket Server untuk real-time sync
-│   ├── order-service/             # Puncak logika bisnis transaksi
-│   ├── product-service/           # Modul katalog produk
-│   └── shared/                    # Utilitas terpusat (Logger, validateEnv, errorHandler)
+├── backend/                       # ⚙️ Lapisan Microservices
+│   ├── analytics-service/         # Agregasi data (Business Intelligence) via gRPC
+│   ├── auth-service/              # Manajer Kredensial & Autentikasi (Bcrypt/JWT)
+│   ├── gateway/                   # Ingress Controller kustom & Rate Limiting
+│   ├── notification-service/      # WebSocket Event Emitter untuk sinkronisasi Real-Time
+│   ├── order-service/             # Puncak komputasi logika transaksi pesanan
+│   ├── product-service/           # Layanan Manajemen Katalog Produk
+│   └── shared/                    # Utilitas terpusat (Logger, Security, DB Handler)
 │
-├── frontend/                      # 🎨 Lapisan UI Client (Vue 3 + Vite)
+├── frontend/                      # 🎨 Lapisan User Interface
 │   ├── src/
-│   │   ├── api/                   # Konfigurasi Axios Interceptors & Socket.IO client
-│   │   ├── components/            # Atomic Design Component Library
-│   │   ├── layouts/               # Template spesifik untuk Dashboard vs Customer
-│   │   └── pages/                 # Logika antarmuka spesifik per Route
+│   │   ├── api/                   # Network Call Interceptors (Axios) & Socket Client
+│   │   ├── components/            # Pustaka Komponen (Atomic Design)
+│   │   ├── layouts/               # Kerangka Halaman (Admin vs Customer Layout)
+│   │   └── pages/                 # Routing Antarmuka
 │   └── vite.config.js             # Konfigurasi Build Pipeline + Vitest
 │
-├── database/                      # 🗃️ Lapisan Automasi Data
-│   ├── migrations/                # Schema Definition (001_create_admins.sql, dsb)
-│   ├── seeds/                     # Data dummy siap pakai untuk Testing
-│   └── migrate.js                 # Runner migrasi SQL khusus
+├── database/                      # 🗃️ Lapisan Automasi Infrastruktur Basis Data
+│   ├── migrations/                # Schema SQL (.sql)
+│   ├── seeds/                     # Skrip pembuat data awal (Seeder)
+│   └── migrate.js                 # Algoritma eksekusi migrasi otomatis
 │
-├── docs/                          # 📖 Standardisasi Dokumentasi Enterprise
-│   ├── 01-existing-project/       # Rincian API Endpoint dan ERD
-│   ├── 02-improvement/            # Bukti log perbaikan keamanan & skalabilitas
-│   └── 03-cloud-computing/        # Cloud Azure Provisioning & Deployment Workflow
-│
-└── ecosystem.config.js            # 🎛️ Manifes PM2 (Process Manager) Cluster
+├── docs/                          # 📖 Pustaka Pengetahuan (Knowledge Base)
+└── ecosystem.config.js            # 🎛️ Manifes Daemon Process Manager (PM2)
 ```
+</details>
 
 ---
 
-## 🚀 Panduan Memulai Cepat (*Quick Start*)
+## 🚀 Quick Start Guide
 
-Sistem dirancang untuk proses orientasi yang sangat lancar (*frictionless onboarding*).
+Didesain untuk *Developer Experience (DX)* yang mulus. Anda dapat menghidupkan ekosistem masif ini di lokal hanya dalam hitungan menit.
 
-### 1. Prasyarat Sistem
-- **Node.js** (v18.x LTS direkomendasikan)
-- **MySQL Server** (v8.0+)
-- **PM2** (Instalasi global: `npm install -g pm2`)
+### 1. Prerequisites
+Pastikan mesin Anda memiliki spesifikasi berikut:
+- **Node.js** (Versi `18.x LTS` atau yang lebih baru).
+- **MySQL Server** (Berjalan di latar belakang pada Port `3306`).
+- **PM2** (Opsional untuk lingkungan Production): `npm install -g pm2`
 
-### 2. Kloning & Instalasi
+### 2. Installation
+Kloning repositori dan instal dependensi root. Berkat integrasi skrip, ini secara otomatis akan menginstal modul di seluruh *sub-folder* microservices dan frontend.
 ```bash
 git clone https://github.com/adamyudhistiramuhtar-byte/SistrackV2.git
 cd SistrackV2
 
-# Menginstal dependensi root secara ajaib akan men-trigger seluruh service backend & frontend
 npm install
 ```
 
-### 3. Basis Data
-Buat dahulu pangkalan data kosong bernama `sistrackv2` di MySQL Anda.
-Lalu jalankan automasi ini dari folder root proyek:
+### 3. Database Setup
+Buat satu *schema* database kosong bernama `sistrackv2` melalui terminal MySQL Anda (`CREATE DATABASE sistrackv2;`). Setelah itu, serahkan pembentukan 7 relasi tabel kompleks pada alat migrasi internal kami:
 ```bash
-# Otomatis mereplikasi 7 relasi tabel kompleks
+# Mengeksekusi tabel admins, products, orders, dll.
 npm run db:migrate
 
-# Mengisinya dengan daftar menu, akun Admin, dan kursi restoran
+# Mengisinya dengan 1 Akun Admin, 12 Kursi, dan puluhan Menu dummy
 npm run db:seed
 ```
 
-### 4. Eksekusi Pengembangan Lokal (Development)
-Kami mengadopsi `concurrently` di tingkat backend agar Anda tidak perlu membuka 6 terminal yang berbeda.
+### 4. Running the Services
+Gunakan skrip `concurrently` untuk menyalakan API Gateway dan kelima *microservice* secara paralel dalam 1 jendela konsol:
 ```bash
-# Menyalakan 6 Microservices (Terminal 1)
+# Terminal 1: Nyalakan Cluster Backend
 npm run dev:backend
 
-# Menyalakan Frontend Vue Vite (Terminal 2)
+# Terminal 2: Nyalakan Vue Frontend Server
 npm run dev:frontend
 ```
-> **Akses Frontend**: `http://localhost:5173`
-> **Akses API**: `http://localhost:3000/api/...`
+> **🌐 Akses Web**: Buka `http://localhost:5173` di peramban Anda.
+> **🔐 Akses Dasbor**: `/admin/login` (Gunakan email: `admin@sistrack.local` | sandi: `admin123`)
 
 ---
 
-## 🛠️ Modul Skrip Pintar (NPM Scripts)
+## 📖 Documentation & API Reference
 
-Root `package.json` dipersenjatai dengan *macro* produktivitas berikut:
-
-| Perintah | Deskripsi Tindakan Eksekusi |
-| :--- | :--- |
-| `npm run start` | Memutar keenam service Backend di *background* mode PM2 untuk *Production*. |
-| `npm run stop` | Mematikan seluruh proses daemon PM2 yang berasosiasi dengan proyek ini. |
-| `npm run db:migrate` | Mengeksekusi file SQL yang belum direkam oleh tabel kontrol migrasi. |
-| `npm run dev:backend` | Memutar *nodemon* untuk keenam service secara paralel dengan warna log berbeda. |
-| `npm run test:backend`| Mengeksekusi Jest In-Memory Test Suite (Mocking Database Layer). |
-| `npm run test:frontend`| Mem-booting `jsdom` Vitest untuk komponen Vue dan fungsi Utilitas. |
+Dokumentasi level korporasi tersedia untuk menguraikan pedoman teknis mendalam proyek ini.
+- [**📘 Layer 1: Panduan Proyek Utama**](docs/01-existing-project/README.md) (Dokumentasi API, Endpoint, Struktur ERD).
+- [**🛠️ Layer 2: Riwayat Code Review & Improvement**](docs/02-improvement/IMPROVEMENT.md) (Rincian teknis penyelesaian 16 isu keamanan, kualitas, dan skalabilitas).
+- [**☁️ Layer 3: Panduan Cloud Computing (SOP)**](docs/TUGAS_BESAR_WORKFLOW.md) (Manuskrip manual migrasi arsitektur ini menuju Microsoft Azure Cloud).
 
 ---
 
-## 🗺️ Panduan Arsitektur Mendalam (Deeper Dive)
+## 🧪 Testing
 
-Proyek ini telah terdokumentasi setara dengan *Corporate Standard Documentation*. Apabila Anda memerlukan detail lebih dalam seputar parameter API, interaksi gRPC, ERD skema Database, maupun panduan cara mereplikasi proyek ini di *Cloud*, silakan tinjau Pustaka Pengetahuan kami di direktori `/docs`:
+Sistem dilengkapi dengan kerangka pengujian terisolasi untuk memastikan integrasi terjamin bebas cacat regresi (*regression-free*).
+```bash
+# Menjalankan In-Memory Service Mock Testing (Jest)
+npm run test:backend
 
-👉 [**Dokumentasi Proyek (ERD & Endpoint API)**](docs/01-existing-project/README.md)
-👉 [**Log Riwayat Improvement Keamanan**](docs/02-improvement/IMPROVEMENT.md)
-👉 [**Standard Operating Procedure Deploy ke Microsoft Azure**](docs/TUGAS_BESAR_WORKFLOW.md)
+# Menjalankan fungsi utilitas Vue UI Testing (Vitest)
+npm run test:frontend
+```
 
 ---
-<div align="center">
-  <small>Dibuat dengan ❤️ sebagai pemenuhan Tugas Besar Komputasi Awan dan Rekayasa Perangkat Lunak 2026.</small>
-</div>
+
+## ☁️ Deployment (Azure Cloud)
+
+Ekosistem *Microservices* ini dioptimasi penuh agar dapat di-deploy ke dalam satu Virtual Machine (VM) menggunakan `PM2`. Cukup atur kredensial Anda di file `.env`, kemudian jalankan:
+```bash
+# Memutar semua sistem di background sebagai Daemon OS
+npm run start
+
+# Menutup sistem
+npm run stop
+```
+*Gunakan **Nginx** sebagai Reverse Proxy untuk mengekspos aplikasi Anda ke Port 80 (HTTP) atau 443 (HTTPS) di Production.*
+
+---
+<p align="center">
+  <br>
+  <b>SisTrackV2</b> &copy; 2026. <br>
+  <i>Built with absolute engineering precision.</i>
+</p>
