@@ -209,7 +209,7 @@ const goCheckout = () => {
 .menu-page {
   font-family: 'DM Sans', sans-serif;
   min-height: 100vh;
-  background: #0D0B09;
+  background: var(--bg);
   padding: 28px 28px 48px;
 }
 
@@ -225,14 +225,14 @@ const goCheckout = () => {
   font-family: 'Playfair Display', serif;
   font-size: 32px;
   font-weight: 700;
-  color: #f0d9b0;
+  color: var(--text);
   letter-spacing: -0.03em;
   line-height: 1;
 }
 
 .page-sub {
   font-size: 13px;
-  color: rgba(240, 217, 176, 0.35);
+  color: var(--text-muted);
   margin-top: 4px;
   font-weight: 300;
 }
@@ -248,13 +248,13 @@ const goCheckout = () => {
   display: flex;
   align-items: center;
   gap: 7px;
-  background: rgba(200, 135, 42, 0.10);
-  border: 1px solid rgba(200, 135, 42, 0.25);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 6px 14px;
   font-size: 12px;
   font-weight: 600;
-  color: #d4a050;
+  color: var(--text);
   letter-spacing: 0.04em;
 }
 
@@ -263,29 +263,28 @@ const goCheckout = () => {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #c8872a;
+  background: var(--accent);
 }
 
 .btn-ghost {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.09);
+  background: transparent;
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 7px 14px;
   font-size: 12px;
   font-weight: 500;
-  color: rgba(240,217,176,0.55);
+  color: var(--text-muted);
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s, color 0.2s;
   font-family: inherit;
 }
 
 .btn-ghost:hover {
-  background: rgba(255,255,255,0.08);
-  border-color: rgba(255,255,255,0.15);
-  color: rgba(240,217,176,0.9);
+  background: var(--border);
+  color: var(--text);
 }
 
 /* ── BODY GRID ──────────────────────────────────────── */
@@ -307,10 +306,8 @@ const goCheckout = () => {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  background: rgba(255,255,255,0.025);
-  border: 1px solid rgba(255,255,255,0.055);
-  border-radius: 18px;
-  padding: 20px;
+  background: transparent;
+  padding: 0;
 }
 
 /* ── FILTER BAR ─────────────────────────────────────── */
@@ -329,7 +326,7 @@ const goCheckout = () => {
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: rgba(240,217,176,0.3);
+  color: var(--text-muted);
   pointer-events: none;
 }
 
@@ -337,9 +334,9 @@ const goCheckout = () => {
   width: 100%;
   padding: 11px 16px 11px 38px;
   border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(0,0,0,0.25);
-  color: #f0d9b0;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
   font-family: 'DM Sans', sans-serif;
   font-size: 13px;
   font-weight: 400;
@@ -347,12 +344,12 @@ const goCheckout = () => {
 }
 
 .search-input::placeholder {
-  color: rgba(240,217,176,0.25);
+  color: var(--text-muted);
 }
 
 .search-input:focus {
   outline: none;
-  border-color: rgba(200,135,42,0.4);
+  border-color: var(--accent);
 }
 
 .categories {
@@ -368,9 +365,9 @@ const goCheckout = () => {
 .cat-btn {
   padding: 5px 15px;
   border-radius: 99px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  color: rgba(240,217,176,0.4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -380,14 +377,14 @@ const goCheckout = () => {
 }
 
 .cat-btn:hover {
-  background: rgba(255,255,255,0.08);
-  color: rgba(240,217,176,0.7);
+  background: var(--border);
+  color: var(--text);
 }
 
 .cat-btn.active {
-  background: #c8872a;
-  border-color: #c8872a;
-  color: #1a1108;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
 }
 
 /* ── RESULT META ────────────────────────────────────── */
@@ -401,19 +398,19 @@ const goCheckout = () => {
 .count-label {
   font-size: 11px;
   font-weight: 600;
-  color: rgba(240,217,176,0.3);
+  color: var(--text-muted);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .count-sep {
-  color: rgba(240,217,176,0.2);
+  color: var(--border);
   font-size: 11px;
 }
 
 .count-cat {
   font-size: 11px;
-  color: #c8872a;
+  color: var(--text);
   font-weight: 600;
   letter-spacing: 0.04em;
 }
@@ -428,12 +425,12 @@ const goCheckout = () => {
 }
 
 .state-wrap.error .state-text {
-  color: #e07060;
+  color: var(--danger);
 }
 
 .state-text {
   font-size: 13px;
-  color: rgba(240,217,176,0.35);
+  color: var(--text-muted);
   font-weight: 400;
 }
 
@@ -448,7 +445,7 @@ const goCheckout = () => {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #c8872a;
+  background: var(--accent);
   animation: pulse 1.2s ease-in-out infinite;
 }
 
@@ -472,7 +469,7 @@ const goCheckout = () => {
   text-align: center;
   padding: 48px 0;
   font-size: 13px;
-  color: rgba(240,217,176,0.25);
+  color: var(--text-muted);
   font-style: italic;
   font-family: 'Playfair Display', serif;
 }
@@ -481,8 +478,8 @@ const goCheckout = () => {
 .cart-sidebar {
   position: sticky;
   top: 84px;
-  background: rgba(255,255,255,0.025);
-  border: 1px solid rgba(255,255,255,0.055);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 18px;
   overflow: hidden;
 }

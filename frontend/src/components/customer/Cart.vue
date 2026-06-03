@@ -74,11 +74,11 @@ const format = (n) =>
   font-family: 'Playfair Display', serif;
   font-size: 20px;
   font-weight: 700;
-  color: #f0d9b0;
+  color: var(--text);
 }
 .sub{ 
   font-size: 11px; 
-  color: rgba(240,217,176,0.3);
+  color: var(--text-muted);
   margin-top: 2px;
 }
 
@@ -86,7 +86,7 @@ const format = (n) =>
   padding: 40px 0;
   text-align: center;
   font-size: 13px;
-  color: rgba(240,217,176,0.25);
+  color: var(--text-muted);
   font-style: italic;
   font-family: 'Playfair Display', serif;
 }
@@ -103,18 +103,18 @@ const format = (n) =>
   gap:12px;
   padding:12px;
   border-radius:12px;
-  border:1px solid rgba(255,255,255,.04);
-  background:rgba(0,0,0,.2);
+  border:1px solid var(--border);
+  background:var(--surface);
 }
 
 .nm{
   font-weight: 600;
   font-size: 13px;
-  color: #f0d9b0;
+  color: var(--text);
 }
 .pr{ 
   font-size: 11px;
-  color: rgba(240,217,176,0.4);
+  color: var(--text-muted);
   margin-top: 2px;
 }
 
@@ -128,9 +128,9 @@ const format = (n) =>
   width:28px;
   height:28px;
   border-radius:8px;
-  border:1px solid rgba(255,255,255,.08);
-  background:rgba(255,255,255,.04);
-  color:#f0d9b0;
+  border:1px solid var(--border);
+  background:transparent;
+  color:var(--text);
   font-weight:500;
   cursor:pointer;
   transition: all 0.2s;
@@ -139,7 +139,7 @@ const format = (n) =>
   justify-content: center;
 }
 .qbtn:hover{
-  background:rgba(255,255,255,.08);
+  background:var(--border);
 }
 
 .qnum{
@@ -147,7 +147,7 @@ const format = (n) =>
   text-align:center;
   font-weight:600;
   font-size:13px;
-  color:#f0d9b0;
+  color:var(--text);
 }
 
 .total{
@@ -155,13 +155,13 @@ const format = (n) =>
   justify-content:space-between;
   align-items: baseline;
   font-weight:700;
-  color:#f0d9b0;
+  color:var(--text);
 }
 
 .total span:first-child {
   font-family: 'Playfair Display', serif;
   font-size: 14px;
-  color: rgba(240,217,176,0.55);
+  color: var(--text-muted);
 }
 
 .total span:last-child {
@@ -174,8 +174,8 @@ const format = (n) =>
   margin-top:18px;
   padding:12px;
   border-radius:12px;
-  background: linear-gradient(135deg, #b8721e, #d4943a);
-  color:#1a1108;
+  background: var(--accent);
+  color: #fff;
   font-weight:700;
   border:none;
   cursor:pointer;

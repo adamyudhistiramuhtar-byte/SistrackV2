@@ -37,18 +37,17 @@ const format = (n) =>
 .prod {
   display: flex;
   flex-direction: column;
-  background: rgba(255,255,255,0.025);
-  border: 1px solid rgba(255,255,255,0.055);
-  border-radius: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .prod:not(.is-disabled):hover {
   transform: translateY(-4px);
-  border-color: rgba(200,135,42,0.3);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-  background: rgba(200,135,42,0.05);
+  border-color: var(--accent);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.06);
 }
 
 .content {
@@ -70,14 +69,14 @@ const format = (n) =>
   font-family: 'DM Sans', sans-serif;
   font-weight: 600;
   font-size: 14px;
-  color: #f0d9b0;
+  color: var(--text);
   line-height: 1.3;
 }
 
 .price {
   font-family: 'DM Sans', sans-serif;
   font-size: 13px;
-  color: rgba(240,217,176,0.55);
+  color: var(--text-muted);
   font-weight: 400;
 }
 
@@ -85,9 +84,9 @@ const format = (n) =>
   width: 32px;
   height: 32px;
   border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.04);
-  color: #f0d9b0;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -97,9 +96,9 @@ const format = (n) =>
 }
 
 .add:not(:disabled):hover {
-  background: #c8872a;
-  border-color: #c8872a;
-  color: #1a1108;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
   transform: scale(1.05);
 }
 
@@ -113,6 +112,6 @@ const format = (n) =>
   background: transparent;
   cursor: not-allowed;
   border-color: transparent;
-  color: rgba(240,217,176,0.3);
+  color: var(--text-muted);
 }
 </style>

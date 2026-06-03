@@ -151,11 +151,10 @@ const startOrder = async () => {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
 .seat-page {
   font-family: 'DM Sans', sans-serif;
   min-height: 100vh;
-  background: #0D0B09;
+  background: var(--bg);
   padding: 48px 28px;
   display: flex;
   justify-content: center;
@@ -173,12 +172,12 @@ const startOrder = async () => {
   font-family: 'Playfair Display', serif;
   font-size: 32px;
   font-weight: 700;
-  color: #f0d9b0;
+  color: var(--text);
   margin: 0;
 }
 .page-sub {
   font-size: 13px;
-  color: rgba(240, 217, 176, 0.35);
+  color: var(--text-muted);
   margin-top: 4px;
 }
 .body-grid {
@@ -193,33 +192,33 @@ const startOrder = async () => {
 .sticky-panel {
   position: sticky;
   top: 24px;
-  background: rgba(255,255,255,0.025);
-  border: 1px solid rgba(255,255,255,0.055);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 18px;
   padding: 24px;
 }
 .field-input {
   width: 100%;
-  background: rgba(0,0,0,0.3);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: transparent;
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 11px 14px;
   font-size: 14px;
-  color: #f0d9b0;
+  color: var(--text);
   font-family: 'DM Sans', sans-serif;
 }
 .field-input:focus {
   outline: none;
-  border-color: rgba(200,135,42,0.45);
+  border-color: var(--accent);
 }
 .submit-btn {
   padding: 12px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #b8721e, #d4943a);
+  background: var(--accent);
   border: none;
   font-size: 14px;
   font-weight: 700;
-  color: #1a1108;
+  color: #FFFFFF;
   cursor: pointer;
   transition: opacity 0.2s;
   font-family: 'DM Sans', sans-serif;
@@ -229,17 +228,17 @@ const startOrder = async () => {
 }
 .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .badge-meja {
-  background: rgba(200, 135, 42, 0.10);
-  border: 1px solid rgba(200, 135, 42, 0.25);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 6px 14px;
   font-size: 12px;
   font-weight: 600;
-  color: #d4a050;
+  color: var(--text);
 }
 .admin-link {
   font-size: 12px;
-  color: rgba(240,217,176,0.3);
+  color: var(--text-muted);
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -247,7 +246,7 @@ const startOrder = async () => {
   transition: all 0.2s;
 }
 .admin-link:hover {
-  color: #f0d9b0;
+  color: var(--text);
 }
 .grid-seat {
   display: grid;

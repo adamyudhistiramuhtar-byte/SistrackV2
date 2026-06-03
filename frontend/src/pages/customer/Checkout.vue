@@ -236,7 +236,7 @@ const formatPrice = n =>
 .checkout-page {
   font-family: 'DM Sans', sans-serif;
   min-height: 100vh;
-  background: #0D0B09;
+  background: var(--bg);
   padding: 28px 28px 64px;
   display: flex;
   flex-direction: column;
@@ -258,30 +258,30 @@ const formatPrice = n =>
   align-items: center;
   gap: 7px;
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
   border-radius: 99px;
   padding: 7px 16px;
   font-size: 12px;
   font-weight: 500;
-  color: rgba(240,217,176,0.45);
+  color: var(--text-muted);
   cursor: pointer;
   transition: all 0.18s;
   font-family: inherit;
 }
 
 .btn-back:hover {
-  border-color: rgba(240,217,176,0.2);
-  color: rgba(240,217,176,0.8);
+  border-color: var(--text);
+  color: var(--text);
 }
 
 .badge-meja {
-  background: rgba(200,135,42,0.10);
-  border: 1px solid rgba(200,135,42,0.22);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 6px 14px;
   font-size: 12px;
   font-weight: 600;
-  color: #d4a050;
+  color: var(--text);
   letter-spacing: 0.05em;
 }
 
@@ -289,13 +289,11 @@ const formatPrice = n =>
 .receipt-shell {
   width: 100%;
   max-width: 900px;
-  background: #141210;
-  border: 1px solid rgba(212, 160, 80, 0.15);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow:
-    0 0 0 1px rgba(0,0,0,0.5),
-    0 40px 80px rgba(0,0,0,0.6);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.05);
   animation: receiptIn 0.4s cubic-bezier(0.22,1,0.36,1) forwards;
 }
 
@@ -308,8 +306,8 @@ const formatPrice = n =>
 .receipt-header {
   padding: 36px 40px 28px;
   text-align: center;
-  background: rgba(200,135,42,0.04);
-  border-bottom: 1px solid rgba(212,160,80,0.10);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -326,13 +324,13 @@ const formatPrice = n =>
 .orn-line {
   flex: 1;
   height: 1px;
-  background: rgba(212,160,80,0.3);
+  background: var(--border);
 }
 
 .orn-diamond {
   width: 5px;
   height: 5px;
-  background: #c8872a;
+  background: var(--text-muted);
   transform: rotate(45deg);
   flex-shrink: 0;
 }
@@ -341,13 +339,13 @@ const formatPrice = n =>
   font-family: 'Playfair Display', serif;
   font-size: 26px;
   font-weight: 700;
-  color: #f0d9b0;
+  color: var(--text);
   letter-spacing: -0.01em;
 }
 
 .receipt-sub {
   font-size: 12px;
-  color: rgba(240,217,176,0.3);
+  color: var(--text-muted);
   font-weight: 300;
   letter-spacing: 0.04em;
   font-style: italic;
@@ -376,7 +374,7 @@ const formatPrice = n =>
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(212,160,80,0.5);
+  color: var(--text-muted);
   margin-bottom: 20px;
 }
 
@@ -394,7 +392,7 @@ const formatPrice = n =>
 
 .empty-cart span {
   font-size: 13px;
-  color: rgba(240,217,176,0.3);
+  color: var(--text-muted);
   font-style: italic;
 }
 
@@ -402,7 +400,7 @@ const formatPrice = n =>
   background: none;
   border: none;
   font-size: 12px;
-  color: #c8872a;
+  color: var(--text);
   cursor: pointer;
   text-decoration: underline;
   font-family: inherit;
@@ -420,7 +418,7 @@ const formatPrice = n =>
   justify-content: space-between;
   align-items: flex-start;
   padding: 12px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid var(--border);
   animation: rowIn 0.3s ease forwards;
   opacity: 0;
   transform: translateX(-8px);
@@ -440,7 +438,7 @@ const formatPrice = n =>
   font-family: 'Playfair Display', serif;
   font-size: 16px;
   font-weight: 600;
-  color: #c8872a;
+  color: var(--text);
   min-width: 28px;
   line-height: 1.3;
 }
@@ -448,13 +446,13 @@ const formatPrice = n =>
 .order-name {
   font-size: 14px;
   font-weight: 600;
-  color: #f0d9b0;
+  color: var(--text);
   line-height: 1.3;
 }
 
 .order-unit {
   font-size: 11px;
-  color: rgba(240,217,176,0.3);
+  color: var(--text-muted);
   margin-top: 2px;
   font-weight: 300;
 }
@@ -462,7 +460,7 @@ const formatPrice = n =>
 .order-price {
   font-size: 14px;
   font-weight: 600;
-  color: rgba(240,217,176,0.75);
+  color: var(--text);
   white-space: nowrap;
   padding-left: 16px;
 }
@@ -476,8 +474,8 @@ const formatPrice = n =>
   height: 1px;
   background: repeating-linear-gradient(
     90deg,
-    rgba(212,160,80,0.25) 0,
-    rgba(212,160,80,0.25) 6px,
+    rgba(22, 20, 15, 0.15) 0,
+    rgba(22, 20, 15, 0.15) 6px,
     transparent 6px,
     transparent 12px
   );
@@ -494,7 +492,7 @@ const formatPrice = n =>
   font-family: 'Playfair Display', serif;
   font-size: 15px;
   font-weight: 600;
-  color: rgba(240,217,176,0.55);
+  color: var(--text-muted);
   letter-spacing: 0.02em;
 }
 
@@ -502,7 +500,7 @@ const formatPrice = n =>
   font-family: 'Playfair Display', serif;
   font-size: 22px;
   font-weight: 700;
-  color: #f0d9b0;
+  color: var(--text);
   letter-spacing: -0.02em;
 }
 
@@ -511,8 +509,8 @@ const formatPrice = n =>
   width: 1px;
   background: repeating-linear-gradient(
     180deg,
-    rgba(212,160,80,0.15) 0,
-    rgba(212,160,80,0.15) 6px,
+    rgba(22, 20, 15, 0.1) 0,
+    rgba(22, 20, 15, 0.1) 6px,
     transparent 6px,
     transparent 12px
   );
@@ -537,17 +535,17 @@ const formatPrice = n =>
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(240,217,176,0.4);
+  color: var(--text-muted);
 }
 
 .req {
-  color: #c8872a;
+  color: var(--danger);
 }
 
 .optional {
   font-size: 10px;
   font-weight: 400;
-  color: rgba(240,217,176,0.2);
+  color: var(--text-muted);
   text-transform: none;
   letter-spacing: 0;
   margin-left: 4px;
@@ -555,31 +553,31 @@ const formatPrice = n =>
 }
 
 .field-input {
-  background: rgba(0,0,0,0.3);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: transparent;
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 11px 14px;
   font-size: 13px;
   font-weight: 400;
-  color: #f0d9b0;
+  color: var(--text);
   font-family: 'DM Sans', sans-serif;
   transition: border-color 0.2s;
 }
 
-.field-input::placeholder { color: rgba(240,217,176,0.2); }
+.field-input::placeholder { color: var(--text-muted); }
 
 .field-input:focus {
   outline: none;
-  border-color: rgba(200,135,42,0.45);
+  border-color: var(--accent);
 }
 
 .field-input.field-error {
-  border-color: rgba(220,80,60,0.5);
+  border-color: var(--danger);
 }
 
 .field-hint.error {
   font-size: 11px;
-  color: #e07060;
+  color: var(--danger);
   font-weight: 400;
 }
 
@@ -597,31 +595,31 @@ const formatPrice = n =>
   gap: 7px;
   padding: 11px;
   border-radius: 10px;
-  background: rgba(0,0,0,0.25);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: transparent;
+  border: 1px solid var(--border);
   font-size: 13px;
   font-weight: 500;
-  color: rgba(240,217,176,0.4);
+  color: var(--text-muted);
   cursor: pointer;
   transition: all 0.18s;
   font-family: inherit;
 }
 
 .pay-opt:hover {
-  border-color: rgba(255,255,255,0.15);
-  color: rgba(240,217,176,0.7);
+  border-color: var(--text-muted);
+  color: var(--text);
 }
 
 .pay-opt.selected {
-  background: rgba(200,135,42,0.12);
-  border-color: rgba(200,135,42,0.40);
-  color: #e0a84a;
+  background: var(--border);
+  border-color: var(--text);
+  color: var(--text);
 }
 
 /* ── SUBMIT ─────────────────────────────────────────── */
 .form-err {
   font-size: 12px;
-  color: #e07060;
+  color: var(--danger);
   padding: 10px 14px;
   background: rgba(220,80,60,0.08);
   border: 1px solid rgba(220,80,60,0.18);
@@ -634,11 +632,11 @@ const formatPrice = n =>
   width: 100%;
   padding: 14px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #b8721e, #d4943a);
+  background: var(--accent);
   border: none;
   font-size: 14px;
   font-weight: 700;
-  color: #1a1108;
+  color: #fff;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -680,7 +678,7 @@ const formatPrice = n =>
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #1a1108;
+  background: #fff;
   animation: pulse 1.2s ease-in-out infinite;
 }
 

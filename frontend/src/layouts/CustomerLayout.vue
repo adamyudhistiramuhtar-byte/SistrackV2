@@ -21,14 +21,12 @@
 }
 
 .header {
-  background: var(--panel);
+  background: var(--surface);
   border-bottom: 1px solid var(--border);
   padding: 16px 22px;
   position: sticky;
   top: 0;
   z-index: 50;
-  backdrop-filter: blur(10px);
-  background: rgba(15, 15, 16, 0.85);
 }
 
 .header-inner {
@@ -40,12 +38,11 @@
 }
 
 .logo {
-  font-weight: 900;
-  font-size: 18px;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 20px;
   letter-spacing: -0.5px;
-  background: linear-gradient(90deg, #fff, #aaa);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text);
 }
 
 .main-content {

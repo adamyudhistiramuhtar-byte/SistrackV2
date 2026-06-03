@@ -16,9 +16,9 @@ defineEmits(['pick'])
 .seat{
   height: 48px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
-  color: #f0d9b0;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -27,16 +27,16 @@ defineEmits(['pick'])
 }
 
 .seat:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: var(--border);
+  border-color: var(--text-muted);
   transform: translateY(-2px);
 }
 
 .seat.active{
-  background: linear-gradient(135deg, #b8721e, #d4943a);
-  color: #1a1108;
+  background: var(--accent);
+  color: #FFFFFF;
   border-color: transparent;
   transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(200, 135, 42, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 </style>
