@@ -48,7 +48,7 @@ async function seed() {
   console.log(`✅ ${products.length} produk contoh ditambahkan`);
 
   // Seed seats (12 kursi)
-  for (let i = 1; i <= 12; i++) {
+  for (let i = 1; i <= 50; i++) {
     await db.execute(
       'INSERT IGNORE INTO seats (seat_number, status) VALUES (?, ?)',
       [i, 'available']
