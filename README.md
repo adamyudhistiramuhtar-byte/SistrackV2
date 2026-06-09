@@ -152,6 +152,7 @@ graph TD
 Dokumentasi level korporasi (*Runbooks*) tersedia untuk menguraikan pedoman operasional dan desain arsitektur proyek ini di Azure Cloud.
 
 - [**🎓 Laporan Akhir Tugas Besar (Final Report)**](docs/Laporan_Tugas_Besar_SistrackV2.md) — Dokumen presentasi komprehensif.
+- [**✅ Final Project Compliance Report**](docs/Final_Compliance_Report.md) — Gap Analysis & Minimum Change Architecture (Chapter 4 & 5).
 - [**🏗️ Azure Architecture Design**](docs/cloud-infrastructure/AzureArchitecture.md) — Cetak biru infrastruktur, VNet, dan NSG.
 - [**⚖️ Load Balancer & Compliance Analysis**](docs/04-load-balancing-and-compliance.md) — Mekanika failover dan pembuktian pemenuhan standar enterprise.
 - [**🚀 Deployment & Migration Guide**](docs/cloud-infrastructure/DeploymentGuide.md) — SOP replikasi VM dan automasi CLI.
