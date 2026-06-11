@@ -1,21 +1,36 @@
-MIT License
+Copyright (c) 2026 Adam Yudhistira Muhtar. All Rights Reserved.
 
-Copyright (c) 2026 SistrackV2 Enterprise
+PROPRIETARY SOFTWARE LICENSE
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This software and associated documentation files (the "Software") are the
+exclusive intellectual property of Adam Yudhistira Muhtar. The Software is
+submitted as a Final Project deliverable for the Cloud Computing course
+(Semester 6) at the author's academic institution.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+TERMS AND CONDITIONS
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+1. RESTRICTIONS
+   No part of this Software may be reproduced, distributed, transmitted,
+   displayed, published, or broadcast in any form or by any means, including
+   photocopying, recording, or other electronic or mechanical methods,
+   without the prior written permission of the copyright holder, except as
+   permitted under applicable academic fair use policies.
+
+2. ACADEMIC USE
+   This Software is developed for educational and academic evaluation
+   purposes. Reviewers, evaluators, and academic staff may access and review
+   the source code solely for grading and assessment purposes.
+
+3. NO WARRANTY
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+   ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+4. ATTRIBUTION
+   Any authorized use of this Software must include proper attribution to
+   Adam Yudhistira Muhtar as the original author.
+
+For licensing inquiries, contact the author via the repository's issue tracker.

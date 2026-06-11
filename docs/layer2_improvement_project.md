@@ -1,66 +1,71 @@
-# [LAYER 2] Dokumentasi Improvement Project
+# [LAYER 2] SistrackV2 Enterprise: Improvement Project & Scale Blueprint
+
+> **Document Version**: 3.0  
+> **Last Updated**: June 2026  
+> **Classification**: Confidential — Academic Final Project Deliverable  
+> **Author**: Adam Yudhistira Muhtar  
 
 ## 1. Executive Summary
-Berdasarkan tinjauan arsitektur eksisting SistrackV2 (Layer 1), sistem telah mengadopsi konsep dasar **Microservices**. Namun, penerapannya masih belum ideal (*anti-pattern* di beberapa bagian, seperti *Shared Database*). Dokumen ini menyajikan rencana strategis (*Improvement Project*) untuk meningkatkan skalabilitas, keandalan (*reliability*), dan kemudahan pemeliharaan (*maintainability*) dari aplikasi ini.
+Berdasarkan tinjauan arsitektur (Layer 1), peladen telah sukses bermigrasi pada kluster **Microservices**. Namun, agar perangkat lunak berevolusi dari *Corporate* menuju *Massive-Scale Enterprise*, dibutuhkan peta jalan perbaikan teknis (*Improvement Project*). Dokumen ini menguraikan resolusi strategis guna mengeliminasi hambatan komputasional (*bottlenecks*) dan meroketkan skalabilitas komputasi SistrackV2.
 
 ---
 
-## 2. Identifikasi Masalah & Bottleneck Saat Ini
+## 2. Identifikasi Hambatan Teknis (Bottleneck Diagnoses)
 
 1. **Shared Database Anti-Pattern**
-   - Saat ini, `auth-service`, `product-service`, dan `order-service` semuanya terhubung ke satu *database* fisik MySQL yang sama (`sistrackv2`). 
-   - *Dampak*: Kegagalan pada *database* ini akan menyebabkan *Single Point of Failure (SPOF)* untuk seluruh *service*, yang menghilangkan keunggulan utama arsitektur *microservices*.
-2. **Kinerja Pengambilan Data (Read-heavy operations)**
-   - API katalog produk dan menu (yang sangat sering diakses oleh *Customer*) selalu menembak langsung ke MySQL. Pada jam sibuk (jam makan siang/malam), hal ini bisa menyebabkan penumpukan antrean koneksi ke basis data.
-3. **Keamanan di Level Gateway Kurang Optimal**
-   - API Gateway saat ini hanya bertindak sebagai *reverse proxy* (`http-proxy-middleware`) dan memiliki pengecekan JWT yang sederhana. Tidak ada mekanisme pencegahan *DDoS* atau *Brute-force* seperti *Rate Limiting*.
-4. **Komunikasi Antar Service yang Synchronous (REST/Axios)**
-   - Ketika pesanan dibuat (`Order Service`), komunikasi sinkron *HTTP* mungkin memperlambat respons dan rentan *timeout* jika *service* lain sedang sibuk atau *down*.
+   - Saat ini, seluruh komponen (*Auth*, *Product*, *Order*) menembak lalu lintas ke satu Pangkalan Data tunggal (`sistrackv2`). 
+   - *Risiko*: Walaupun mencegah kompleksitas data, jika beban I/O basis data memuncak, ini menciptakan *Single Point of Failure (SPOF)* pada lapis data.
+2. **Latensi Pengambilan Data (Read-Heavy Operations)**
+   - API katalog produk dieksekusi ratusan kali per menit tanpa lapisan *Cache*. Pada jam kritis (Peak Hours), kueri tanpa henti ke MySQL memboroskan sumber daya *Compute*.
+3. **Komunikasi Antar Service yang Synchronous (REST/Axios)**
+   - Proses pembentukan pesanan saat ini menggunakan HTTP REST yang bersifat *blocking*. Jika satu layanan melambat, latensi klien akan berlipat ganda.
 
 ---
 
-## 3. Proposed Improvements (Inisiatif Perbaikan)
+## 3. Resolusi Strategis Tingkat Lanjut (Proposed Improvements)
 
-### 3.1 Peningkatan Arsitektur Data
-- **Database per Service (Isolation)**
-  - Pisahkan skema database:
-    - `sistrackv2_auth` untuk *Auth Service*.
-    - `sistrackv2_product` untuk *Product Service*.
-    - `sistrackv2_order` untuk *Order Service*.
-  - *Data Synchronization* antara order dan product (misalnya validasi stok/harga saat *checkout*) akan dilakukan via panggilan gRPC antar-service, bukan via JOIN di level database.
-- **Implementasi Caching Layer (Redis)**
-  - Terapkan Redis di dalam `product-service`.
-  - Simpan daftar produk (*available products*) di *cache*. Ketika ada pembaruan produk oleh Admin, hapus (*invalidate*) *cache* tersebut. Hal ini akan memangkas beban MySQL hingga 80-90% pada rute publik.
+### 3.1 Peningkatan Arsitektur Data Berkinerja Tinggi
+- **Database Isolation per Service**
+  - Isolasi logikal skema MySQL:
+    - `sistrackv2_auth` (Otorisasi).
+    - `sistrackv2_product` (Manajemen Inventaris).
+    - `sistrackv2_order` (Manajemen Transaksi).
+  - Validasi Lintas-Domain akan dijembatani via protokol ultra-cepat *gRPC*, menghilangkan *Join Query* yang memberatkan basis data.
+- **Implementasi Caching Layer (In-Memory Redis)**
+  - Pengenalan kluster Redis di dalam lapisan `product-service`.
+  - Meretas beban baca MySQL hingga 90% dengan menyajikan daftar produk dari RAM berlatensi *sub-millisecond*. Sistem membatalkan (*invalidate*) cache setiap ada operasi penulisan dari Administrator.
 
-### 3.2 Peningkatan Keamanan & Reliabilitas (API Gateway)
-- **Rate Limiting & Throttling**
-  - Menggunakan *library* seperti `express-rate-limit` di API Gateway untuk membatasi jumlah *request* dari IP yang sama dalam durasi waktu tertentu.
+### 3.2 Pertahanan API Gateway & Reliabilitas
 - **Circuit Breaker Pattern**
-  - Implementasikan `opossum` atau *library circuit breaker* sejenis di level Gateway atau saat komunikasi antar-*service* (via Axios/gRPC). Ini memastikan jika satu *service down*, *request* berikutnya akan digagalkan dengan cepat (*fail-fast*) untuk menghemat *resources* daripada menunggu *timeout*.
+  - Implementasi mekanik pemutus arus (seperti pustaka `opossum`). Jika sub-layanan mengalami *Time-Out*, API Gateway memutus koneksi lalu lintas dengan cepat (*Fail-Fast*) daripada menunda respon klien.
 
-### 3.3 Pembaruan Infrastruktur Kode (*Codebase*)
-- **Migrasi ke TypeScript**
-  - Ubah basis kode `.js` yang ada di *backend* secara bertahap menjadi `.ts`. Ini akan memberikan *type safety* yang kuat untuk *payload request*, respons API, dan struktur basis data.
-- **Asynchronous Messaging (Message Broker)**
-  - Perkenalkan **RabbitMQ** atau **Apache Kafka**.
-  - Kasus Penggunaan: Saat `order-service` berhasil memproses pesanan baru, ia mempublikasikan *event* `OrderCreated`. `notification-service` atau *service* lain dapat mendengarkan (*subscribe*) *event* ini untuk segera merespons tanpa harus di-ping secara langsung (*loose coupling*).
+### 3.3 Pembaruan Infrastruktur Kode Dasar (Codebase)
+- **Evolusi TypeScript**
+  - Refaktor basis kode dari *JavaScript* menuju bahasa statis terkompilasi (*TypeScript*) guna mengaktifkan *Type Safety* di tingkat korporasi.
+- **Asynchronous Messaging (Message Broker / Event Stream)**
+  - Pengadopsian **RabbitMQ** atau **Apache Kafka**.
+  - Aplikasi: Saat pesanan tercetak, *Order Service* memublikasikan *Event* `OrderCreated` ke antrean. *Notification Service* menyerap log itu secara asinkron (Loose Coupling), menyokong resiliensi tanpa henti walau layanan lain sedang dalam siklus *Reboot*.
 
 ---
 
-## 4. Roadmap Implementasi (Fase Pengembangan)
+## 4. Peta Jalan Implementasi Penuh (Deployment Roadmap)
 
 **Fase 1: Quick Wins (Minggu 1-2)**
-- [ ] Implementasi Redis *caching* di `product-service`.
-- [ ] Penambahan *Rate Limiting* di API Gateway.
-- [ ] Penambahan standar *Logger* (ELK Stack siap) pada `shared` modul.
+- [ ] Injeksi Redis *caching* pada modul produk.
+- [ ] Pemasangan *Circuit Breaker* pada layer API Gateway.
 
-**Fase 2: Pemisahan Data & Type Safety (Minggu 3-6)**
-- [ ] Inisialisasi basis kode TypeScript di *service* baru atau yang di-refactor.
-- [ ] Migrasi database: Pecah `sistrackv2` menjadi `_auth`, `_product`, `_order`.
-- [ ] Penyesuaian `db.js` pada masing-masing *service* untuk menunjuk ke database terisolasi.
-- [ ] Penggantian komunikasi sinkron gRPC antar *service* untuk keperluan validasi harga produk di *order*.
+**Fase 2: Pemisahan Data & Keamanan Tipe (Minggu 3-6)**
+- [ ] Transmutasi kode menuju TypeScript secara agresif.
+- [ ] Partisi fisik dan logikal Pangkalan Data (`sistrackv2_auth`, dll).
+- [ ] Rekonstruksi metode gRPC antar layanan.
 
-**Fase 3: Full Distributed System (Minggu 7-8)**
-- [ ] Setup RabbitMQ dan integrasi implementasi *Event-Driven Architecture*.
-- [ ] Pembuatan `analytics-service` yang mengumpulkan log data berdasarkan *event streaming* bukan lagi query *direct* ke MySQL.
-- [ ] Implementasi *Circuit Breaker* secara menyeluruh.
+**Fase 3: Full Distributed Event System (Minggu 7-8)**
+- [ ] Topologi Antrean Pesan (RabbitMQ) pada Virtual Network Azure.
+- [ ] Modul Analitik direkayasa ulang mengonsumsi *Event Streaming* mentah dari Kafka.
+
+---
+
+<div align="center">
+  <b>SisTrackV2 Enterprise</b> &copy; 2026 Adam Yudhistira Muhtar. All Rights Reserved.<br>
+  <i>Confidential & Proprietary Infrastructure Reference.</i>
+</div>

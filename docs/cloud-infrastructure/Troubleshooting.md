@@ -1,4 +1,4 @@
-# Troubleshooting Guide — SistrackV2 Azure Infrastructure
+# Troubleshooting Guide — SistrackV2 Enterprise Azure Infrastructure
 
 > **Panduan pemecahan masalah komprehensif untuk operasional harian.**
 
@@ -342,3 +342,10 @@ echo ""
 echo "=== API HEALTH ==="
 curl -s http://localhost:3000/health | python3 -m json.tool 2>/dev/null || echo "❌ Gateway not responding"
 ```
+
+---
+
+<div align="center">
+  <b>SisTrackV2 Enterprise</b> &copy; 2026 Adam Yudhistira Muhtar. All Rights Reserved.<br>
+  <i>Confidential & Proprietary Troubleshooting Guide.</i>
+</div>

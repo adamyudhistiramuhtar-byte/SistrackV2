@@ -1,4 +1,4 @@
-# Deployment Guide — SistrackV2 Azure Load Balancer Migration
+# Deployment Guide — SistrackV2 Enterprise Azure Load Balancer Migration
 
 > **Panduan ini membimbing Anda step-by-step dari arsitektur Single-VM ke Multi-VM + Azure Load Balancer.**  
 > **Prerequisite**: Anda sudah memiliki VM-01 (`sistrack-web-vm`) yang berjalan dengan Nginx + PM2.
@@ -516,3 +516,10 @@ gantt
 ```
 
 **Total estimated migration time**: ~2.5 jam (dengan validasi menyeluruh).
+
+---
+
+<div align="center">
+  <b>SisTrackV2 Enterprise</b> &copy; 2026 Adam Yudhistira Muhtar. All Rights Reserved.<br>
+  <i>Confidential & Proprietary Deployment Documentation.</i>
+</div>

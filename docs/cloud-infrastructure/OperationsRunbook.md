@@ -1,4 +1,4 @@
-# Operations Runbook — SistrackV2 Production Environment
+# Operations Runbook — SistrackV2 Enterprise Production Environment
 
 > **Prosedur standar operasional untuk tim yang mengelola infrastruktur SistrackV2 di Azure.**
 
@@ -293,5 +293,11 @@ exit
 | Check disk space | `df -h` |
 | Check memory | `free -m` |
 | Check CPU | `htop` |
-| Test API health | `curl http://localhost:3000/health` |
 | Check LB IP | `az network public-ip show -g Sistrack-RG -n sistrack-lb-pip --query ipAddress -o tsv` |
+
+---
+
+<div align="center">
+  <b>SisTrackV2 Enterprise</b> &copy; 2026 Adam Yudhistira Muhtar. All Rights Reserved.<br>
+  <i>Confidential & Proprietary Operations Runbook.</i>
+</div>

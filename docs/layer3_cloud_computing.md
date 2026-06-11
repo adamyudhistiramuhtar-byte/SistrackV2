@@ -1,73 +1,86 @@
-# [LAYER 3] Dokumentasi Cloud Computing (Tugas Besar)
+# [LAYER 3] SistrackV2 Enterprise: Cloud Computing Scaling Architecture (Tugas Besar)
+
+> **Document Version**: 3.0  
+> **Last Updated**: June 2026  
+> **Classification**: Confidential — Academic Final Project Deliverable  
+> **Author**: Adam Yudhistira Muhtar  
 
 ## 1. Pendahuluan
-Sebagai bagian dari pemenuhan standar aplikasi level *Enterprise*, arsitektur SistrackV2 yang berbasis *Microservices* menuntut solusi infrastruktur (*deployment*) yang *scalable*, aman, dan tangguh (*resilient*). Dokumen ini merancang strategi adopsi *Cloud Computing* secara menyeluruh, dirancang menggunakan penyedia layanan *cloud* **Amazon Web Services (AWS)**.
+Sebagai proyek pemenuhan standar level *Enterprise*, arsitektur komputasi SistrackV2 dituntut memiliki skalabilitas yang tak terhingga (*Infinite Scalability*). Dokumen ini menguraikan masa depan arsitektur yang melampaui fase 2 (Multi-VM Azure Load Balancer), dengan menyiapkan infrastruktur berbasis kontainer penuh (*Full Containerization*) di atas ekosistem **Amazon Web Services (AWS) / Azure Kubernetes Service (AKS)**.
 
 ---
 
-## 2. Cloud Architecture Topology (AWS)
+## 2. Topologi Jaringan Taraf Eksekutif (Cloud Architecture Topology)
 
-Arsitektur akan dibangun di atas **Virtual Private Cloud (VPC)** yang diatur dengan *Multi-Availability Zone (Multi-AZ)* untuk toleransi kesalahan (*fault tolerance*).
+Sistem akan dieksekusi di atas infrastruktur **Virtual Private Cloud (VPC) / VNet** dengan isolasi zona *Multi-Availability Zone (Multi-AZ)* tingkat ekstrem.
 
 ### 2.1 Subnetting Strategy
-- **Public Subnet**: Digunakan untuk *Application Load Balancer (ALB)*, NAT Gateway, dan *Bastion Host* (jika diperlukan untuk manajemen).
-- **Private Subnet (App Tier)**: Menjalankan *worker nodes* untuk *Kubernetes Cluster* (Amazon EKS) yang meng-host layanan-layanan (Auth, Product, Order, Gateway).
-- **Private Subnet (Data Tier)**: Berisi layanan *Managed Database* (Amazon RDS) dan layanan *Caching* (Amazon ElastiCache). Subnet ini sangat terisolasi tanpa akses internet langsung sama sekali.
+- **DMZ Public Subnet**: Lini terdepan yang berisi *Application Load Balancer (ALB)* lapis 7, NAT Gateway, dan filter *Web Application Firewall (WAF)*.
+- **Compute Private Subnet (App Tier)**: Menampung armada *worker nodes* untuk *Kubernetes Cluster* (EKS/AKS). Microservices akan mengapung secara dinamis pada kluster ini tanpa akses internet terbuka.
+- **Vault Private Subnet (Data Tier)**: Level militer, benar-benar buta internet. Menjalankan *Managed Relational DB* dan kluster Memori Terdistribusi (Redis).
 
-### 2.2 Arsitektur Diagram (*Logical*)
-*(Konseptual)*
-Internet $\rightarrow$ **AWS WAF** $\rightarrow$ **Internet Gateway** $\rightarrow$ **Application Load Balancer** $\rightarrow$ **EKS Cluster (Private App Tier)** $\rightarrow$ **RDS & ElastiCache (Private Data Tier)**.
+### 2.2 Arsitektur Diagram Konseptual
+```
+[Internet Publik] 
+  ↓
+[AWS WAF / Azure Front Door] (Filter DDoS & Eksploitasi)
+  ↓
+[Elastic / Standard Load Balancer] (Gateway Eksternal)
+  ↓
+[Kubernetes Ingress Controller] (Penyortir Lapis Aplikasi)
+  ↓
+[EKS / AKS Worker Nodes] (Microservices Pods)
+  ↓
+[PaaS Database & ElastiCache] (Data Isolasi Total)
+```
 
 ---
 
 ## 3. Containerization Strategy
 
-Langkah pertama menuju *Cloud* adalah mengemas sistem *backend* dan *frontend* menggunakan **Docker**.
+Seluruh infrastruktur (OS + Aplikasi) digembok dan dimuat ke dalam kontainer yang tidak bisa dimutasi (*Immutable Containers*).
 
-### 3.1 Dockerfile untuk Microservices (Node.js)
-Setiap layanan (*Gateway*, *Auth*, *Product*, dll.) akan memiliki *Dockerfile* standar yang optimal menggunakan *Multi-stage Build*:
-1. **Build Stage**: Menggunakan image `node:18-alpine`, menginstal dependensi (`npm install`), dan mengompilasi aset atau tipe data (jika memakai TypeScript).
-2. **Production Stage**: Hanya menyalin file biner (*production ready*), tidak meng-copy `devDependencies`, dan menjalankan *runtime* aplikasi.
+### 3.1 Dockerfile Microservices Node.js
+Setiap layanan akan dikompilasi menggunakan teknik **Multi-stage Build** untuk merampingkan aset dan mencegah eksploitasi keamanan:
+1. **Builder Stage**: Mengerahkan image `node:20-alpine`, mengeksekusi kompilasi *TypeScript* dan instalasi modul C++.
+2. **Production Stage**: Membuang pustaka pengembang (*DevDependencies*), hanya mentransfer kode *bytecode* akhir dan mejalankan *Node Runtime* murni.
 
 ### 3.2 Frontend Containerization
-Aplikasi Vue 3 (Vite) dikemas ke dalam *container* Nginx (misal: `nginx:alpine`). Nginx tidak hanya menyajikan *static file* yang telah di-*build*, namun juga bertindak menangani *routing* berbasis *history* untuk *Single Page Application* (SPA).
+Antarmuka pengguna (Vue 3 / Vite) dikemas sebagai peladen Nginx mikro yang sangat teroptimasi (`nginx:alpine`), mendistribusikan *static assets* dengan performa maksimum dan kapabilitas rotasi *History API* mandiri.
 
 ---
 
-## 4. Orchestration menggunakan Kubernetes (Amazon EKS)
+## 4. Orkestrasi Kontainer via Kubernetes (EKS / AKS)
 
-Sistem didistribusikan di atas **Amazon Elastic Kubernetes Service (EKS)**.
-Berikut adalah manifest/objek kunci yang akan di-*deploy*:
+Kluster tidak lagi diatur secara manual oleh operator manusia, melainkan diorkestrasi secara matematis oleh kluster kecerdasan mesin Kubernetes.
 
-1. **Deployments & Pods**: Setiap *service* dideklarasikan dalam `Deployment` dengan konfigurasi minimum 2 *replicas* (untuk ketersediaan tinggi) dan *Horizontal Pod Autoscaler (HPA)* berbasis utilisasi CPU atau Memory.
-2. **Services**: Komunikasi antar *microservices* internal dalam kluster menggunakan Kubernetes Service bertipe `ClusterIP`. API Gateway mengekspos dirinya menggunakan NGINX Ingress Controller.
-3. **ConfigMaps & Secrets**:
-   - **ConfigMap**: Menyimpan konfigurasi non-sensitif (port, URL *service* lain).
-   - **Secrets**: Terintegrasi dengan AWS Secrets Manager (misal lewat *CSI driver*) untuk menyuntikkan kredensial database dan kunci rahasia (JWT_SECRET) ke dalam kontainer.
+1. **Deployments & Pods**: Konfigurasi mematenkan minimum 3 *Replicas* per layanan, diikat dengan *Horizontal Pod Autoscaler (HPA)* yang otomatis menduplikasi sistem ketika pelonjakan memori (*Traffic Burst*) melampaui 70%.
+2. **Services & Ingress**: Komunikasi layanan internal via *ClusterIP*, sedangkan penetrasi dari *Load Balancer* difilter via aturan *NGINX Ingress Controller*.
+3. **Vault & Secrets Manager**: Variabel lingkungan rahasia (*Environment Variables*) tidak lagi disimpan di peladen, melainkan disuntikkan secara aman via *AWS Secrets Manager / Azure Key Vault CSI driver*.
 
 ---
 
-## 5. Database & Caching Services (Managed Cloud)
+## 5. Pipeline Integrasi dan Pengiriman Berkelanjutan (CI/CD)
 
-Untuk mengurangi beban operasional pemeliharaan basis data, skema migrasi diarahkan menggunakan model *DB-as-a-Service*:
-- **Relational Database**: **Amazon RDS for MySQL** dengan *Multi-AZ Deployment* dan fitur *auto-backup* harian. Di kemudian hari, saat database dipecah per-service (sesuai *Improvement Project Layer 2*), bisa dibuat multi-*database instances* dalam RDS yang sama.
-- **In-Memory Cache**: **Amazon ElastiCache for Redis**, yang dapat menangani jutaan *requests per second* dengan latensi sub-milidetik, vital untuk *product catalog* (*Product Service*).
+Penggelaran infrastruktur mengikuti budaya **DevSecOps** yang tidak memberikan toleransi kesalahan manual:
 
----
-
-## 6. Pipeline CI/CD (Continuous Integration & Continuous Deployment)
-
-Menggunakan **GitHub Actions** atau **AWS CodePipeline**, alur kerjanya adalah sebagai berikut:
-1. **Push ke Branch `main`**: *Trigger event*.
-2. **Linting & Unit Test (CI)**: Menjalankan tes otomatis pada kode Node.js dan Vue.js.
-3. **Build & Push Docker Image**: Melakukan *build* image Docker, lalu di-*push* menuju **Amazon Elastic Container Registry (ECR)** dengan tag spesifik berbasis *commit hash* (*immutable tags*).
-4. **Deploy ke EKS (CD)**: Memperbarui manifes Kubernetes di repositori (mengubah versi *image tag*) menggunakan `kubectl set image` atau metode GitOps seperti *ArgoCD*, lalu menerapkan ke kluster secara *rolling update* agar *zero-downtime*.
+1. **Kode di-Push (Commit)**: Memicu siklus *GitHub Actions* korporasi.
+2. **Uji Otomatis & Analisa Statis (CI)**: Mesin memeriksa integritas kode dan *Linting* secara presisi.
+3. **Pembekuan Kontainer (Docker Push)**: Image dikunci dengan *Hash Kriptografi* dan disimpan ke registri *Container Registry*.
+4. **Zero-Downtime Deployment (CD)**: Skrip secara dinamis me-rotasi *Pod* Kubernetes satu-persatu tanpa memutus aliran data koneksi Klien.
 
 ---
 
-## 7. Monitoring & Observability
+## 6. Observabilitas Panoptikon (Monitoring & Telemetry)
 
-Karena memantau banyak kontainer yang terdistribusi (*microservices*) lebih rumit dibandingkan sistem monolitik, dibutuhkan *observability layer*:
-- **Metrics**: **Prometheus** untuk mengumpulkan metrik dari Node.js (CPU, jumlah *request*) dan infrastruktur (metrik Kubernetes Node). Data tersebut divisualisasikan menjadi dasbor *real-time* di **Grafana**.
-- **Centralized Logging**: Menggunakan tumpukan **EFK (Elasticsearch, Fluentd/Fluent Bit, Kibana)** atau AWS CloudWatch Logs. Semua log keluaran standar (`stdout`) dari setiap kontainer di-*scrape* oleh Fluent Bit dan dikirim ke agregator log, mempermudah pelacakan (misal melacak *Order ID* antar *service*).
-- **Distributed Tracing**: Integrasi **AWS X-Ray** atau *Jaeger* untuk melihat jalur (*trace*) satu *request user* mulai dari Gateway $\rightarrow$ Auth $\rightarrow$ Product, guna melacak titik spesifik yang menjadi penyebab perlambatan atau *error*.
+Membedah lalu lintas data yang melintasi sistem terdistribusi ini diatur dengan pusat pemantauan milidetik:
+- **Metrics Aggregation**: Kluster **Prometheus** menghisap data vital dari Node.js (CPU, alokasi Garbage Collector), dan menampilkannya menjadi dasbor tempur **Grafana**.
+- **Centralized Log Analytics**: Menggunakan **ELK Stack (Elasticsearch, Logstash, Kibana)**. Tidak ada lagi operator log manual; semua output terdistribusi ditelan dan dirangkum.
+- **Distributed Tracing (Sinar-X Jaringan)**: Penetrasi layanan demi layanan diawasi ketat oleh **AWS X-Ray / Jaeger**, sehingga penundaan satu fungsi dapat diisolasi seketika.
+
+---
+
+<div align="center">
+  <b>SisTrackV2 Enterprise</b> &copy; 2026 Adam Yudhistira Muhtar. All Rights Reserved.<br>
+  <i>Confidential & Proprietary Infrastructure Reference.</i>
+</div>

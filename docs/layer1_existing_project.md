@@ -1,38 +1,43 @@
-# [LAYER 1] Dokumentasi Project yang Ada (Existing Project)
+# [LAYER 1] SistrackV2 Enterprise: Existing Project Architecture Analysis
+
+> **Document Version**: 3.0  
+> **Last Updated**: June 2026  
+> **Classification**: Confidential — Academic Final Project Deliverable  
+> **Author**: Adam Yudhistira Muhtar  
 
 ## 1. Introduction
 
 ### 1.1 Purpose
-Dokumen ini menguraikan Software Requirements Specification (SRS) dan Arsitektur Sistem dari **SistrackV2** secara *as-is*. Tujuannya adalah memberikan pemahaman mendalam tentang struktur kode, arsitektur *microservices*, dan alur data yang saat ini berjalan, baik untuk *onboarding* *developer* baru maupun sebagai dasar analisis pengembangan.
+Dokumen ini menguraikan Software Requirements Specification (SRS) dan Arsitektur Sistem dari **SistrackV2** secara *as-is*. Tujuannya adalah memberikan pemahaman mendalam tentang struktur kode, arsitektur *microservices*, dan alur data yang beroperasi di dalam kluster peladen, baik untuk *onboarding developer* maupun audit infrastruktur.
 
 ### 1.2 Scope
-SistrackV2 adalah sebuah aplikasi reservasi/pemesanan *(Ordering and Seating System)* yang memungkinkan pelanggan (Customer) untuk memilih meja (SeatSelect), melihat menu, dan melakukan pembayaran/checkout. Sistem ini juga memiliki antarmuka Dasbor Admin untuk mengelola data dan memantau status pesanan dan analitik.
+SistrackV2 merupakan *Enterprise Ordering and Seating System* otonom yang memungkinkan pelanggan (Customer) untuk mereservasi meja, mengakses menu, dan mengeksekusi pembayaran secara mulus. Platform ini dilengkapi Dasbor Administratif *Real-Time* guna memonitor siklus pesanan dan menghitung analitik intelijen bisnis.
 
 ### 1.3 Technologies Used
-Sistem dibangun menggunakan tumpukan teknologi modern yang berfokus pada JavaScript/TypeScript *ecosystem*:
+Sistem dibangun secara tangguh menggunakan *JavaScript/TypeScript ecosystem*:
 - **Frontend**: Vue 3, Vue Router, Vite, TailwindCSS, Chart.js, Socket.IO Client.
-- **Backend (Microservices)**: Node.js, Express.js, gRPC, Socket.IO, JWT untuk autentikasi, `http-proxy-middleware` untuk API Gateway.
-- **Database**: MySQL (diakses menggunakan konektor `mysql2/promise`).
+- **Backend (Microservices Cluster)**: Node.js, Express.js, gRPC, Socket.IO, JWT Cryptography, `http-proxy-middleware`.
+- **Database Layer**: Relational MySQL.
 
 ---
 
 ## 2. Overall Description
 
 ### 2.1 Product Perspective
-Sistem beroperasi sebagai aplikasi berbasis web yang memiliki dua jenis klien utama:
-1. **Public/Customer View**: Diakses tanpa autentikasi ketat di awal. Pelanggan memilih nomor kursi (`SeatSelect`), mengakses menu (`Menu`), dan menyelesaikan pesanan (`Checkout`).
-2. **Admin View**: Terlindungi oleh JWT Token (`AdminLogin`). Memungkinkan staf atau pengelola restoran mengakses `AdminDashboard`.
+Platform ini melayani dua antarmuka (Client-Facing & Internal):
+1. **Public/Customer View**: *Self-Service Kiosk* publik yang melayani pemilihan nomor kursi, visualisasi katalog menu, dan *checkout* transaksional secara anonim (tanpa otentikasi login).
+2. **Admin View**: Area terklasifikasi yang dilindungi oleh Enkripsi Token JWT. Diotorisasi secara ketat untuk staf yang memantau dasbor *real-time* dapur.
 
 ### 2.2 Operating Environment
-- **Server**: Berjalan di atas environment Node.js minimal versi 18.x.
-- **Database**: Membutuhkan server MySQL (biasanya port 3306).
-- **Client**: Berjalan pada *browser* web modern (Chrome, Safari, Firefox, Edge).
+- **Compute Runtime**: Node.js minimal versi 18.x LTS pada Ubuntu Linux.
+- **Database Engine**: Azure MySQL Flexible Server / Local MySQL (Port 3306).
+- **Client**: Berjalan pada *browser* standar berbasis Chromium atau WebKit.
 
 ---
 
 ## 3. System Architecture
 
-Aplikasi *backend* saat ini mengadopsi arsitektur **Microservices** yang dikoordinasikan oleh sebuah **API Gateway**.
+Alih-alih mengandalkan arsitektur *Monolith*, SistrackV2 menggunakan arsitektur **Distributed Microservices** dengan manajemen titik masuk terpusat menggunakan **API Gateway**.
 
 ```mermaid
 graph TD
@@ -45,15 +50,15 @@ graph TD
     Analytics[Analytics Service]
     Notification[Notification Service]
     
-    DB[(MySQL: sistrackv2)]
+    DB[(PaaS MySQL: sistrackv2)]
 
     Client <-->|REST / HTTP| Gateway
-    Client <-->|WebSocket| Notification
+    Client <-->|WebSocket Persistent| Notification
     
-    Gateway -->|Proxy /auth| Auth
-    Gateway -->|Proxy /products| Product
-    Gateway -->|Proxy /orders| Order
-    Gateway -.->|gRPC| Analytics
+    Gateway -->|Reverse Proxy /auth| Auth
+    Gateway -->|Reverse Proxy /products| Product
+    Gateway -->|Reverse Proxy /orders| Order
+    Gateway -.->|Binary gRPC| Analytics
     
     Auth --> DB
     Product --> DB
@@ -62,57 +67,43 @@ graph TD
 ```
 
 ### 3.1 Komponen Microservices
-1. **API Gateway (`gateway`)**: Bertindak sebagai *reverse proxy*. Merutekan *request* masuk dari *client* ke *service* yang tepat. Memiliki *middleware* pengecekan JWT Token untuk proteksi *route* Admin.
-2. **Auth Service (`auth-service`)**: Menangani proses *login*, verifikasi *password* menggunakan *bcrypt*, dan penerbitan *JSON Web Token* (JWT).
-3. **Product Service (`product-service`)**: Mengelola katalog menu dan produk. Membedakan rute publik (`/api/products/available`) dan rute admin (`/api/products`).
-4. **Order Service (`order-service`)**: Mengelola transaksi, pembuatan pesanan dari pelanggan, dan status pesanan.
-5. **Analytics Service (`analytics-service`)**: Berkomunikasi menggunakan **gRPC**. Mengambil data ringkasan analitik (penjualan, tren) yang selanjutnya dipanggil oleh API Gateway.
-6. **Notification Service (`notification-service`)**: Service mandiri berbasis *Socket.IO* untuk memberikan pembaruan (*real-time update*) ke klien.
-7. **Shared (`shared`)**: Kumpulan modul dan *library* yang digunakan ulang oleh *service-service* lain (misalnya konfigurasi logger).
+1. **API Gateway (`gateway`)**: Bertindak sebagai *Reverse Proxy Controller*. Mendistribusikan *request* masuk ke layanan yang tepat dan menerapkan *Rate Limiting* serta validasi JWT Token.
+2. **Auth Service (`auth-service`)**: Menangani proses otentikasi, enkripsi *password* satu arah (Bcrypt), dan penerbitan *JSON Web Token* (JWT).
+3. **Product Service (`product-service`)**: Engine manajerial *Inventory* katalog produk makanan dan minuman.
+4. **Order Service (`order-service`)**: Mesin pemrosesan transaksi utama (*Core Transaction Engine*).
+5. **Analytics Service (`analytics-service`)**: Modul agregat data bervolume tinggi yang berkomunikasi via **gRPC** untuk mencegah kemacetan HTTP pada peladen.
+6. **Notification Service (`notification-service`)**: Saluran *push-notification* *real-time* berbasis *Socket.IO*.
+7. **Shared Library (`shared`)**: Kumpulan modul fungsional (*Logger*, *Config*) yang didistribusikan silang antar-mikrolayanan.
 
 ---
 
 ## 4. Data Model
 
-Sistem saat ini menggunakan **Shared Database Pattern**. Meskipun *source code* dipisah menjadi beberapa *microservice*, semua *service* tersebut melakukan *query* ke satu database fisik yang sama yaitu `sistrackv2`.
+Sistem menerapkan **Shared Database Pattern** dalam level microservices. Semua *service* secara terpusat melakukan kueri ke satu instansi basis data `sistrackv2` untuk mencapai determinisme data.
 
-Skema konseptual entitas yang ada dalam basis data MySQL:
-- **`users` / `admins`**: Tabel untuk menyimpan data autentikasi (username, *hashed password*).
-- **`products`**: Menyimpan ID produk, nama, harga, status ketersediaan (available/sold out).
-- **`orders`**: Menyimpan data transaksi, referensi kursi/meja (seat), total harga, dan status pesanan.
-- **`order_items`**: Tabel relasi *many-to-many* antara *orders* dan *products* (menyimpan *quantity* dan *subtotal*).
-
-*(Catatan: Saat ini setiap service seperti Auth, Product, dan Order melakukan inisialisasi koneksi pool masing-masing ke database MySQL ini via file `db.js`).*
+*Key Entities:*
+- **`users` / `admins`**: Entitas otorisasi kriptografi.
+- **`products`**: Master data persediaan.
+- **`orders`**: Data rekaman siklus pesanan dan referensi kursi.
+- **`order_items`**: Rekaman detil transaksi (Relasi *many-to-many*).
 
 ---
 
 ## 5. API & Integrasi
 
 ### 5.1 RESTful APIs (via Gateway)
-Sebagian besar komunikasi HTTP direlai melalui API Gateway di port `3000`.
-- **`POST /api/auth/login`** $\rightarrow$ Diteruskan (*forwarded*) secara langsung menggunakan *Axios* ke Auth Service.
-- **`GET /api/products/available`** $\rightarrow$ Proxy ke Product Service (Tanpa Autentikasi).
-- **`GET/POST /api/products/*`** $\rightarrow$ Proxy ke Product Service (Membutuhkan JWT Token).
-- **`POST /api/orders`** $\rightarrow$ Diteruskan menggunakan *Axios* ke Order Service.
-- **`GET /api/analytics/dashboard`** $\rightarrow$ Gateway mengeksekusi koneksi **gRPC** ke Analytics Service dan mengembalikan response JSON ke *client*.
+Mayoritas komunikasi ditangani lewat API Gateway di port TCP `3000`.
+- **`POST /api/auth/login`** $\rightarrow$ Rute Otentikasi.
+- **`GET /api/products/available`** $\rightarrow$ Pengambilan Katalog Publik.
+- **`POST /api/orders`** $\rightarrow$ Pencatatan Injeksi Transaksi.
+- **`GET /api/analytics/dashboard`** $\rightarrow$ Gateway mengeksekusi koneksi **gRPC** secara asinkron ke layanan Analitik dan merender respon JSON ke layar eksekutif.
 
 ### 5.2 Real-time Communication
-- Frontend menginisiasi koneksi WebSockets ke `Notification Service` melalui *library* `socket.io-client`.
+Koneksi konstan dua-arah dipertahankan antara Klien dan *Notification Service* melalui perpustakaan `socket.io-client`.
 
 ---
 
-## 6. Cara Menjalankan Lokal
-
-Pendekatan *development* lokal saat ini membutuhkan beberapa proses yang berjalan paralel.
-
-1. **Persiapan Database**:
-   - Pastikan MySQL server menyala.
-   - Buat database dengan nama `sistrackv2`.
-   - Konfigurasikan variabel *environment* `.env` pada tiap folder *service* (*backend*) untuk kredensial database (Host, User, Password).
-2. **Menjalankan Backend**:
-   - Terdapat sebuah skrip PowerShell `run.all.ps1` di *root directory* untuk memutar semua *microservices* sekaligus.
-   - Atau masuk ke setiap sub-folder (`gateway`, `auth-service`, dll.), jalankan `npm install`, lalu `npm run dev` (memakai `nodemon`).
-3. **Menjalankan Frontend**:
-   - Pindah ke folder `frontend`.
-   - Eksekusi `npm install`.
-   - Jalankan `npm run dev` (Vite akan membuka server lokal, misalnya di `http://localhost:5173`).
+<div align="center">
+  <b>SisTrackV2 Enterprise</b> &copy; 2026 Adam Yudhistira Muhtar. All Rights Reserved.<br>
+  <i>Confidential & Proprietary Infrastructure Reference.</i>
+</div>
