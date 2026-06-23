@@ -31,8 +31,9 @@ async function seed() {
   console.log(`✅ Admin: ${adminEmail} / ${adminPassword}`);
 
   // Bersihkan data lama agar tidak duplikat
-  await db.execute('DELETE FROM products');
-  await db.execute('ALTER TABLE products AUTO_INCREMENT = 1');
+  await db.execute('SET FOREIGN_KEY_CHECKS = 0');
+  await db.execute('TRUNCATE TABLE products');
+  await db.execute('SET FOREIGN_KEY_CHECKS = 1');
   console.log('🗑️  Tabel products dibersihkan');
 
   // Seed 50 menu unik
