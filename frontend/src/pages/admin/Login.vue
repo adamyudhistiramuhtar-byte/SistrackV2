@@ -44,8 +44,8 @@ import { useRouter } from 'vue-router'
 import api from '../../api/gateway'
 
 const router = useRouter()
-const email = ref('admin@sistrack.local')
-const password = ref('admin123')
+const email = ref('admin@sistrackv2.local')
+const password = ref('Admin123!')
 const loading = ref(false)
 const error = ref('')
 
@@ -93,4 +93,3 @@ const login = async () => {
   color: var(--text);
 }
 </style>
-
