@@ -164,7 +164,7 @@ const fetchOrders = async () => {
 }
 
 const fetchAnalytics = async () => {
-  const res = await api.get('/api/analytics/dashboard')
+  const res = await api.get('/analytics/dashboard')
   const data = res?.data?.data || res?.data || {}
   analytics.value = {
     totalOrders: Number(data.totalOrders || data.total_orders || 0),
@@ -175,7 +175,7 @@ const fetchAnalytics = async () => {
 
 const completeOrder = async (order) => {
   try {
-    await api.post(`/api/orders/${order.id}/complete`)
+    await api.post(`/orders/${order.id}/complete`)
     showToast('ok', 'Selesai', `Order meja ${order.seatNumber} selesai`)
     await fetchOrders()
     await fetchAnalytics()
